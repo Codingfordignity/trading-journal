@@ -225,46 +225,46 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
       </button>
       <div class="timeline-title">
         <h2 id="tl-symbol">Symbol</h2>
-        <p id="tl-meta">Bias · Status</p>
+        <p id="tl-meta">Bias - Status</p>
       </div>
     </div>
     <!-- SPECS SUMMARY CARD - always visible -->
     <div id="specs-summary-card" onclick="openSpecs()" style="margin:12px 18px;background:var(--card);border-radius:12px;border:1px solid var(--border2);padding:14px 16px;cursor:pointer;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
         <span style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--muted2)">TRADE SPECS</span>
-        <span style="font-size:11px;color:var(--cyan);font-family:var(--mono)">✏️ tap to edit</span>
+        <span style="font-size:11px;color:var(--cyan);font-family:var(--mono)">[e] tap to edit</span>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
         <div style="text-align:center">
           <div style="font-size:10px;color:var(--muted);margin-bottom:3px">ENTRY</div>
-          <div id="sc-entry" style="font-family:var(--mono);font-size:14px;color:var(--white)">—</div>
+          <div id="sc-entry" style="font-family:var(--mono);font-size:14px;color:var(--white)">-</div>
         </div>
         <div style="text-align:center">
           <div style="font-size:10px;color:var(--muted);margin-bottom:3px">EXIT</div>
-          <div id="sc-exit" style="font-family:var(--mono);font-size:14px;color:var(--white)">—</div>
+          <div id="sc-exit" style="font-family:var(--mono);font-size:14px;color:var(--white)">-</div>
         </div>
         <div style="text-align:center">
           <div style="font-size:10px;color:var(--muted);margin-bottom:3px">QTY</div>
-          <div id="sc-qty" style="font-family:var(--mono);font-size:14px;color:var(--white)">—</div>
+          <div id="sc-qty" style="font-family:var(--mono);font-size:14px;color:var(--white)">-</div>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
         <div style="text-align:center">
           <div style="font-size:10px;color:var(--muted);margin-bottom:3px">STOP</div>
-          <div id="sc-sl" style="font-family:var(--mono);font-size:13px;color:var(--red)">—</div>
+          <div id="sc-sl" style="font-family:var(--mono);font-size:13px;color:var(--red)">-</div>
         </div>
         <div style="text-align:center">
           <div style="font-size:10px;color:var(--muted);margin-bottom:3px">TARGET</div>
-          <div id="sc-tp" style="font-family:var(--mono);font-size:13px;color:var(--green)">—</div>
+          <div id="sc-tp" style="font-family:var(--mono);font-size:13px;color:var(--green)">-</div>
         </div>
         <div style="text-align:center">
           <div style="font-size:10px;color:var(--muted);margin-bottom:3px">P&L</div>
-          <div id="sc-pnl" style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--muted2)">—</div>
+          <div id="sc-pnl" style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--muted2)">-</div>
         </div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
         <div id="sc-outcome" style="font-family:var(--mono);font-size:11px;letter-spacing:1px;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.05);color:var(--muted2)">OPEN</div>
-        <div id="sc-grade" style="font-family:var(--mono);font-size:11px;color:var(--muted)">Grade: —</div>
+        <div id="sc-grade" style="font-family:var(--mono);font-size:11px;color:var(--muted)">Grade: -</div>
       </div>
     </div>
     <div class="phase-list" id="phase-list"></div>
@@ -315,13 +315,13 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
     </div>
     <div class="cloud-card">
       <h3>BACKUP & RESTORE</h3>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6">Move your journal between your laptop and iPhone in two taps. Backup saves a file — Restore loads it back.</p>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6">Move your journal between your laptop and iPhone in two taps. Backup saves a file - Restore loads it back.</p>
       <button class="btn-primary" onclick="downloadBackup()" style="width:100%;margin-bottom:10px;font-size:15px;padding:14px">
-        ⬇️ &nbsp; Backup — Download Journal File
+        ⬇️ &nbsp; Backup - Download Journal File
       </button>
       <label style="display:block;width:100%">
         <div class="btn-outline-cyan" style="width:100%;text-align:center;padding:14px;font-size:15px;cursor:pointer;border-radius:8px;border:1px solid var(--cyan);color:var(--cyan)">
-          ⬆️ &nbsp; Restore — Load Journal File
+          ⬆️ &nbsp; Restore - Load Journal File
         </div>
         <input type="file" accept=".json" onchange="loadBackup(this)" style="display:none">
       </label>
@@ -577,7 +577,7 @@ function renderTradeList(){
   const list = document.getElementById('trade-list');
   let filtered = currentFilter==='ALL' ? trades : trades.filter(t=>t.status===currentFilter);
   if(!filtered.length){
-    list.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">No logs found.</div><div class="empty-sub">Tap + to start a new trade or AI Extract to parse a reflection.</div></div>`;
+    list.innerHTML=`<div class="empty-state"><div class="empty-icon"></div><div class="empty-title">No logs found.</div><div class="empty-sub">Tap + to start a new trade or AI Extract to parse a reflection.</div></div>`;
     return;
   }
   list.innerHTML=filtered.map(t=>{
@@ -587,7 +587,7 @@ function renderTradeList(){
     let right='';
     if(t.status==='CLOSED'&&t.winLoss!=='NONE'){
       const s=t.pnl>=0?'+':'-'; const c=t.pnl>=0?'pos':'neg';
-      right=`<span class="trade-pnl ${c}">${s}₹${Math.abs(t.pnl).toFixed(0)}</span>`;
+      right=`<span class="trade-pnl ${c}">${s}Rs.${Math.abs(t.pnl).toFixed(0)}</span>`;
     } else {
       const bc=t.status==='PLANNING'?'badge-planning':t.status==='ACTIVE'?'badge-active':'badge-closed';
       right=`<span class="trade-status-badge ${bc}">${t.status}</span>`;
@@ -614,7 +614,7 @@ function renderTimeline(){
   const trade=trades.find(t=>t.id===selectedTradeId);
   if(!trade) return;
   document.getElementById('tl-symbol').textContent=trade.symbol+' Lifecycle';
-  document.getElementById('tl-meta').textContent=`Bias: ${trade.direction}  ·  Status: ${trade.status}`;
+  document.getElementById('tl-meta').textContent=`Bias: ${trade.direction}  -  Status: ${trade.status}`;
   const logsMap={};
   (trade.logs||[]).forEach(l=>logsMap[l.phase]=l);
   if(typeof updateSpecsSummary==='function') updateSpecsSummary();
@@ -627,7 +627,7 @@ function renderTimeline(){
       content=`<div class="phase-content"><div class="phase-notes">${log.notes}</div><div class="phase-badges">${badges}</div>${kw}</div>`;
     }
     const actionBtn=isLogged
-      ?`<button class="edit-btn" onclick="openPhaseModal('${phase}',true)">✏️ Edit</button>`
+      ?`<button class="edit-btn" onclick="openPhaseModal('${phase}',true)">[e] Edit</button>`
       :`<button class="log-btn" onclick="openPhaseModal('${phase}',false)">Log Phase</button>`;
     return `<div class="phase-card ${isLogged?'logged':''}">
       <div class="phase-header">
@@ -760,7 +760,7 @@ function saveSpecs(){
   save(); closeModal('modal-specs'); renderTimeline(); updateSpecsSummary();
   // Toast notification
   if(t.pnl!==0){
-    const msg=t.pnl>0?'WIN  +₹'+t.pnl.toFixed(0):'LOSS  -₹'+Math.abs(t.pnl).toFixed(0);
+    const msg=t.pnl>0?'WIN  +Rs.'+t.pnl.toFixed(0):'LOSS  -Rs.'+Math.abs(t.pnl).toFixed(0);
     const color=t.pnl>0?'var(--green)':'var(--red)';
     const toast=document.createElement('div');
     toast.style.cssText='position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid '+color+';color:'+color+';font-family:var(--mono);font-size:13px;padding:10px 20px;border-radius:20px;z-index:999';
@@ -773,38 +773,36 @@ function saveSpecs(){
 // Update the always-visible specs summary card
 function updateSpecsSummary(){
   const t=trades.find(t=>t.id===selectedTradeId); if(!t) return;
-  const fmt=v=>v>0?v.toLocaleString('en-IN'):'—';
+  const fmt=v=>v>0?v.toLocaleString('en-IN'):'-';
   document.getElementById('sc-entry').textContent=fmt(t.entryPrice);
   document.getElementById('sc-exit').textContent=fmt(t.exitPrice);
-  document.getElementById('sc-qty').textContent=t.quantity>0?t.quantity:'—';
+  document.getElementById('sc-qty').textContent=t.quantity>0?t.quantity:'-';
   document.getElementById('sc-sl').textContent=fmt(t.stopLoss);
   document.getElementById('sc-tp').textContent=fmt(t.takeProfit);
   const pnlEl=document.getElementById('sc-pnl');
   if(t.pnl!==0){
-    pnlEl.textContent=(t.pnl>0?'+₹':'-₹')+Math.abs(t.pnl).toFixed(0);
+    pnlEl.textContent=(t.pnl>0?'+Rs.':'-Rs.')+Math.abs(t.pnl).toFixed(0);
     pnlEl.style.color=t.pnl>0?'var(--green)':'var(--red)';
-  } else { pnlEl.textContent='—'; pnlEl.style.color='var(--muted2)'; }
+  } else { pnlEl.textContent='-'; pnlEl.style.color='var(--muted2)'; }
   const outcomeEl=document.getElementById('sc-outcome');
   const wl=t.winLoss||'NONE';
   outcomeEl.textContent=wl==='NONE'?'OPEN':wl;
   outcomeEl.style.background=wl==='WIN'?'var(--green-dim)':wl==='LOSS'?'var(--red-dim)':wl==='BREAKEVEN'?'var(--cyan-dim)':'rgba(255,255,255,0.05)';
   outcomeEl.style.color=wl==='WIN'?'var(--green)':wl==='LOSS'?'var(--red)':wl==='BREAKEVEN'?'var(--cyan)':'var(--muted2)';
-  document.getElementById('sc-grade').textContent='Grade: '+(t.grade||'—');
+  document.getElementById('sc-grade').textContent='Grade: '+(t.grade||'-');
   // Highlight card border based on outcome
   const card=document.getElementById('specs-summary-card');
   card.style.borderColor=wl==='WIN'?'rgba(16,185,129,0.4)':wl==='LOSS'?'rgba(244,63,94,0.4)':'var(--border2)';
 }
 
-// AI extraction from phase notes — tries to extract prices silently
+// AI extraction from phase notes - tries to extract prices silently
 async function tryAiExtractFromNotes(trade){
-  const allNotes=(trade.logs||[]).map(l=>l.phase+': '+l.notes).join('
-');
+  const allNotes=(trade.logs||[]).map(l=>l.phase+': '+l.notes).join(' | ');
   if(allNotes.length<20) return;
   // Only run if entry or exit is missing
   if(trade.entryPrice>0 && trade.exitPrice>0) return;
   try{
-    const prompt='Extract trading data from these phase notes. Return ONLY JSON with keys: entryPrice(number), exitPrice(number), stopLoss(number), takeProfit(number), quantity(number). Use 0 if not found. Notes:
-'+allNotes;
+    const prompt='Extract trading data from these phase notes. Return ONLY JSON with keys: entryPrice(number), exitPrice(number), stopLoss(number), takeProfit(number), quantity(number). Use 0 if not found. Notes: '+allNotes;
     const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:prompt}]})});
     const data=await r.json();
     const text=data.content?.map(c=>c.text||'').join('')||'';
@@ -851,13 +849,13 @@ function renderAnalytics(){
   let tp=allTrades.length*8, logged=0;
   allTrades.forEach(t=>{const u=new Set((t.logs||[]).map(l=>l.phase));PHASES.forEach(p=>{if(u.has(p))logged++;});});
   const disc=tp>0?(logged/tp*100):0;
-  const pnlFmt=totalPnl>=0?`+₹${totalPnl.toFixed(0)}`:`-₹${Math.abs(totalPnl).toFixed(0)}`;
+  const pnlFmt=totalPnl>=0?`+Rs.${totalPnl.toFixed(0)}`:`-Rs.${Math.abs(totalPnl).toFixed(0)}`;
   const pnlC=totalPnl>=0?'var(--green)':'var(--red)';
   document.getElementById('stats-grid').innerHTML=`
-    <div class="stat-card"><div class="stat-label">WIN RATE</div><div class="stat-value" style="color:var(--green)">${wr.toFixed(1)}%</div><div class="stat-sub">${wins.length}W · ${losses.length}L · ${bes.length}BE</div></div>
+    <div class="stat-card"><div class="stat-label">WIN RATE</div><div class="stat-value" style="color:var(--green)">${wr.toFixed(1)}%</div><div class="stat-sub">${wins.length}W - ${losses.length}L - ${bes.length}BE</div></div>
     <div class="stat-card"><div class="stat-label" style="color:var(--cyan)">DISCIPLINE</div><div class="stat-value" style="color:var(--cyan)">${disc.toFixed(1)}%</div><div class="stat-sub">8-Phase score</div></div>
     <div class="stat-card"><div class="stat-label">NET PnL</div><div class="stat-value" style="color:${pnlC}">${pnlFmt}</div><div class="stat-sub">${closed.length} closed</div></div>
-    <div class="stat-card"><div class="stat-label">PROFIT FACTOR</div><div class="stat-value">${pf.toFixed(2)}</div><div class="stat-sub">Avg ₹${avg.toFixed(0)}/trade</div></div>`;
+    <div class="stat-card"><div class="stat-label">PROFIT FACTOR</div><div class="stat-value">${pf.toFixed(2)}</div><div class="stat-sub">Avg Rs.${avg.toFixed(0)}/trade</div></div>`;
   const sorted=closed.slice().sort((a,b)=>a.createdAt-b.createdAt);
   let wc=0;
   const ts=sorted.map((t,i)=>{if(t.winLoss==='WIN')wc++;return{i:i+1,sym:t.symbol,wr:wc/(i+1)*100};});
@@ -867,7 +865,7 @@ function renderAnalytics(){
     const gt=closed.filter(t=>t.grade===g);
     const gwr=gt.length?(gt.filter(t=>t.winLoss==='WIN').length/gt.length*100):0;
     const gpnl=gt.reduce((s,t)=>s+t.pnl,0);
-    const ps=gpnl>=0?`+₹${gpnl.toFixed(0)}`:`-₹${Math.abs(gpnl).toFixed(0)}`;
+    const ps=gpnl>=0?`+Rs.${gpnl.toFixed(0)}`:`-Rs.${Math.abs(gpnl).toFixed(0)}`;
     const pc=gpnl>=0?'var(--green)':'var(--red)';
     return `<div class="grade-row"><div class="grade-circle" style="${gt.length?'border-color:var(--green)':''}">${g}</div><div class="grade-info"><p>${gt.length} trades</p><span style="color:${pc}">${ps}</span></div><span class="grade-wr">${gwr.toFixed(0)}% WR</span></div>`;
   }).join('');
@@ -897,7 +895,7 @@ function renderPlaybook(){
   const list=document.getElementById('playbook-list');
   let filtered=pbFilter==='ALL'?principles:principles.filter(p=>p.category===pbFilter);
   if(!filtered.length){
-    list.innerHTML=`<div class="empty-state"><div class="empty-icon">📚</div><div class="empty-title">No principles yet.</div><div class="empty-sub">Tap + to add a trading principle, rule, or lesson learned.</div></div>`;
+    list.innerHTML=`<div class="empty-state"><div class="empty-icon"></div><div class="empty-title">No principles yet.</div><div class="empty-sub">Tap + to add a trading principle, rule, or lesson learned.</div></div>`;
     return;
   }
   list.innerHTML=filtered.map(p=>{
@@ -908,7 +906,7 @@ function renderPlaybook(){
       <span class="principle-tag ${tagClass}">${(p.category||'general').toUpperCase()}</span>
       <div class="principle-title">${p.title}</div>
       <div class="principle-body">${p.body}</div>
-      <div class="principle-meta"><span>${p.source||''}</span><span style="display:flex;align-items:center;gap:8px">${date}<button onclick="event.stopPropagation();deletePrinciple(${p.id})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:12px;padding:0">🗑</button></span></div>
+      <div class="principle-meta"><span>${p.source||''}</span><span style="display:flex;align-items:center;gap:8px">${date}<button onclick="event.stopPropagation();deletePrinciple(${p.id})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:12px;padding:0">[x]</button></span></div>
     </div>`;
   }).join('');
 }
@@ -981,7 +979,7 @@ function loadBackup(input){
       if(Array.isArray(imp.trades)){ imp.trades.forEach(t=>{ if(!trades.find(x=>x.id===t.id)){trades.push(t);ta++;} }); }
       if(Array.isArray(imp.principles)){ imp.principles.forEach(p=>{ if(!principles.find(x=>x.id===p.id)){principles.push(p);pa++;} }); }
       save();
-      document.getElementById('restore-status').innerHTML=`<div class="status-box status-ok">✓ Restored ${ta} trade(s) and ${pa} principle(s) successfully.</div>`;
+      document.getElementById('restore-status').innerHTML=`<div class="status-box status-ok">[OK] Restored ${ta} trade(s) and ${pa} principle(s) successfully.</div>`;
       renderTradeList();
     } catch(err){
       document.getElementById('restore-status').innerHTML=`<div class="status-box status-err">Could not read file. Make sure it's a valid journal backup.</div>`;
@@ -1014,7 +1012,7 @@ Only include phases actually mentioned. Entry: "${para}"`;
     if(t.winLoss!=='NONE') t.status='CLOSED';
     else if(t.logs.length>0) t.status='ACTIVE';
     trades.unshift(t); save(); renderTradeList();
-    document.getElementById('ai-status-box').innerHTML=`<div class="status-box status-ok">✓ Extracted ${t.symbol} with ${t.logs.length} phases.</div>`;
+    document.getElementById('ai-status-box').innerHTML=`<div class="status-box status-ok">[OK] Extracted ${t.symbol} with ${t.logs.length} phases.</div>`;
     document.getElementById('ai-paragraph').value='';
   } catch(e){
     document.getElementById('ai-status-box').innerHTML=`<div class="status-box status-err">Failed to parse. Check connection. ${e.message}</div>`;
