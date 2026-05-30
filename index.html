@@ -184,6 +184,9 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
 .btn-save-cyan{background:var(--cyan);color:#000;border:none;font-weight:700;font-size:13px;padding:10px 22px;border-radius:8px;cursor:pointer;font-family:var(--sans)}
 .btn-save-amber{background:var(--amber);color:#000;border:none;font-weight:700;font-size:13px;padding:10px 22px;border-radius:8px;cursor:pointer;font-family:var(--sans)}
 .status-box{padding:12px;border-radius:8px;font-size:13px;line-height:1.5;margin-bottom:14px}
+.ai-extracting{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--cyan);padding:6px 12px;background:var(--cyan-dim);border-radius:6px;margin-bottom:10px}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.spin{animation:spin 1s linear infinite;display:inline-block}
 .status-ok{background:var(--green-dim);color:var(--white);border:1px solid rgba(16,185,129,0.2)}
 .status-err{background:var(--red-dim);color:var(--white);border:1px solid rgba(244,63,94,0.2)}
 </style>
@@ -224,7 +227,45 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
         <h2 id="tl-symbol">Symbol</h2>
         <p id="tl-meta">Bias · Status</p>
       </div>
-      <button class="specs-btn" onclick="openSpecs()">Specs / PnL</button>
+    </div>
+    <!-- SPECS SUMMARY CARD - always visible -->
+    <div id="specs-summary-card" onclick="openSpecs()" style="margin:12px 18px;background:var(--card);border-radius:12px;border:1px solid var(--border2);padding:14px 16px;cursor:pointer;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--muted2)">TRADE SPECS</span>
+        <span style="font-size:11px;color:var(--cyan);font-family:var(--mono)">✏️ tap to edit</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
+        <div style="text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px">ENTRY</div>
+          <div id="sc-entry" style="font-family:var(--mono);font-size:14px;color:var(--white)">—</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px">EXIT</div>
+          <div id="sc-exit" style="font-family:var(--mono);font-size:14px;color:var(--white)">—</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px">QTY</div>
+          <div id="sc-qty" style="font-family:var(--mono);font-size:14px;color:var(--white)">—</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px">STOP</div>
+          <div id="sc-sl" style="font-family:var(--mono);font-size:13px;color:var(--red)">—</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px">TARGET</div>
+          <div id="sc-tp" style="font-family:var(--mono);font-size:13px;color:var(--green)">—</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px">P&L</div>
+          <div id="sc-pnl" style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--muted2)">—</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+        <div id="sc-outcome" style="font-family:var(--mono);font-size:11px;letter-spacing:1px;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.05);color:var(--muted2)">OPEN</div>
+        <div id="sc-grade" style="font-family:var(--mono);font-size:11px;color:var(--muted)">Grade: —</div>
+      </div>
     </div>
     <div class="phase-list" id="phase-list"></div>
   </div>
@@ -576,6 +617,7 @@ function renderTimeline(){
   document.getElementById('tl-meta').textContent=`Bias: ${trade.direction}  ·  Status: ${trade.status}`;
   const logsMap={};
   (trade.logs||[]).forEach(l=>logsMap[l.phase]=l);
+  if(typeof updateSpecsSummary==='function') updateSpecsSummary();
   document.getElementById('phase-list').innerHTML=PHASES.map(phase=>{
     const log=logsMap[phase]; const isLogged=!!log;
     let content='';
@@ -660,7 +702,10 @@ function savePhaseLog(){
   if(activeP.includes(currentPhase)&&trade.status==='PLANNING') trade.status='ACTIVE';
   if(closedP.includes(currentPhase)&&trade.status==='ACTIVE') trade.status='CLOSED';
   trade.updatedAt=Date.now();
-  save(); closeModal('modal-phase'); renderTimeline();
+  save(); closeModal('modal-phase'); renderTimeline(); updateSpecsSummary();
+  // Try AI extraction silently in background
+  const updatedTrade=trades.find(t=>t.id===selectedTradeId);
+  if(updatedTrade) tryAiExtractFromNotes(updatedTrade);
 }
 
 // ============ SPECS ============
@@ -695,18 +740,105 @@ function saveSpecs(){
   t.stopLoss=parseFloat(document.getElementById('sp-sl').value)||0;
   t.takeProfit=parseFloat(document.getElementById('sp-tp').value)||0;
   t.quantity=parseFloat(document.getElementById('sp-qty').value)||0;
-  let pnl=parseFloat(document.getElementById('sp-pnl').value)||0;
-  if(!pnl&&t.entryPrice&&t.exitPrice&&t.quantity){ const m=t.direction==='BUY'?1:-1; pnl=(t.exitPrice-t.entryPrice)*t.quantity*m; }
-  t.pnl=pnl;
-  let wl=specOutcome;
-  if(wl==='NONE'&&pnl!==0) wl=pnl>0?'WIN':pnl<0?'LOSS':'BREAKEVEN';
-  t.winLoss=wl; t.grade=specGrade; t.updatedAt=Date.now();
-  save(); closeModal('modal-specs'); renderTimeline();
+  // Auto-calculate PnL
+  let pnl=0;
+  if(t.entryPrice>0&&t.exitPrice>0&&t.quantity>0){
+    const m=t.direction==='BUY'?1:-1;
+    pnl=(t.exitPrice-t.entryPrice)*t.quantity*m;
+  }
+  if(pnl===0){ pnl=parseFloat(document.getElementById('sp-pnl').value)||0; }
+  t.pnl=Math.round(pnl*100)/100;
+  // Auto WIN/LOSS
+  if(pnl>0) t.winLoss='WIN';
+  else if(pnl<0) t.winLoss='LOSS';
+  else if(t.exitPrice>0) t.winLoss='BREAKEVEN';
+  else t.winLoss='NONE';
+  t.grade=specGrade;
+  // Auto-close if exit price set
+  if(t.exitPrice>0&&t.status!=='CLOSED') t.status='CLOSED';
+  t.updatedAt=Date.now();
+  save(); closeModal('modal-specs'); renderTimeline(); updateSpecsSummary();
+  // Toast notification
+  if(t.pnl!==0){
+    const msg=t.pnl>0?'WIN  +₹'+t.pnl.toFixed(0):'LOSS  -₹'+Math.abs(t.pnl).toFixed(0);
+    const color=t.pnl>0?'var(--green)':'var(--red)';
+    const toast=document.createElement('div');
+    toast.style.cssText='position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid '+color+';color:'+color+';font-family:var(--mono);font-size:13px;padding:10px 20px;border-radius:20px;z-index:999';
+    toast.textContent=msg;
+    document.body.appendChild(toast);
+    setTimeout(()=>toast.remove(),2500);
+  }
+}
+
+// Update the always-visible specs summary card
+function updateSpecsSummary(){
+  const t=trades.find(t=>t.id===selectedTradeId); if(!t) return;
+  const fmt=v=>v>0?v.toLocaleString('en-IN'):'—';
+  document.getElementById('sc-entry').textContent=fmt(t.entryPrice);
+  document.getElementById('sc-exit').textContent=fmt(t.exitPrice);
+  document.getElementById('sc-qty').textContent=t.quantity>0?t.quantity:'—';
+  document.getElementById('sc-sl').textContent=fmt(t.stopLoss);
+  document.getElementById('sc-tp').textContent=fmt(t.takeProfit);
+  const pnlEl=document.getElementById('sc-pnl');
+  if(t.pnl!==0){
+    pnlEl.textContent=(t.pnl>0?'+₹':'-₹')+Math.abs(t.pnl).toFixed(0);
+    pnlEl.style.color=t.pnl>0?'var(--green)':'var(--red)';
+  } else { pnlEl.textContent='—'; pnlEl.style.color='var(--muted2)'; }
+  const outcomeEl=document.getElementById('sc-outcome');
+  const wl=t.winLoss||'NONE';
+  outcomeEl.textContent=wl==='NONE'?'OPEN':wl;
+  outcomeEl.style.background=wl==='WIN'?'var(--green-dim)':wl==='LOSS'?'var(--red-dim)':wl==='BREAKEVEN'?'var(--cyan-dim)':'rgba(255,255,255,0.05)';
+  outcomeEl.style.color=wl==='WIN'?'var(--green)':wl==='LOSS'?'var(--red)':wl==='BREAKEVEN'?'var(--cyan)':'var(--muted2)';
+  document.getElementById('sc-grade').textContent='Grade: '+(t.grade||'—');
+  // Highlight card border based on outcome
+  const card=document.getElementById('specs-summary-card');
+  card.style.borderColor=wl==='WIN'?'rgba(16,185,129,0.4)':wl==='LOSS'?'rgba(244,63,94,0.4)':'var(--border2)';
+}
+
+// AI extraction from phase notes — tries to extract prices silently
+async function tryAiExtractFromNotes(trade){
+  const allNotes=(trade.logs||[]).map(l=>l.phase+': '+l.notes).join('
+');
+  if(allNotes.length<20) return;
+  // Only run if entry or exit is missing
+  if(trade.entryPrice>0 && trade.exitPrice>0) return;
+  try{
+    const prompt='Extract trading data from these phase notes. Return ONLY JSON with keys: entryPrice(number), exitPrice(number), stopLoss(number), takeProfit(number), quantity(number). Use 0 if not found. Notes:
+'+allNotes;
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:prompt}]})});
+    const data=await r.json();
+    const text=data.content?.map(c=>c.text||'').join('')||'';
+    const result=JSON.parse(text.replace(/```json|```/g,'').trim());
+    let updated=false;
+    if(result.entryPrice>0&&trade.entryPrice===0){ trade.entryPrice=result.entryPrice; updated=true; }
+    if(result.exitPrice>0&&trade.exitPrice===0){ trade.exitPrice=result.exitPrice; updated=true; }
+    if(result.stopLoss>0&&trade.stopLoss===0){ trade.stopLoss=result.stopLoss; updated=true; }
+    if(result.takeProfit>0&&trade.takeProfit===0){ trade.takeProfit=result.takeProfit; updated=true; }
+    if(result.quantity>0&&trade.quantity===0){ trade.quantity=result.quantity; updated=true; }
+    if(updated){
+      // recalculate PnL if we now have entry+exit+qty
+      if(trade.entryPrice>0&&trade.exitPrice>0&&trade.quantity>0){
+        const m=trade.direction==='BUY'?1:-1;
+        trade.pnl=Math.round((trade.exitPrice-trade.entryPrice)*trade.quantity*m*100)/100;
+        if(trade.pnl>0) trade.winLoss='WIN';
+        else if(trade.pnl<0) trade.winLoss='LOSS';
+        else trade.winLoss='BREAKEVEN';
+        if(trade.exitPrice>0) trade.status='CLOSED';
+      }
+      save(); updateSpecsSummary(); renderTimeline();
+      // subtle toast
+      const toast=document.createElement('div');
+      toast.style.cssText='position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--cyan);color:var(--cyan);font-family:var(--mono);font-size:11px;padding:8px 16px;border-radius:20px;z-index:999';
+      toast.textContent='AI filled Specs from your notes';
+      document.body.appendChild(toast);
+      setTimeout(()=>toast.remove(),2500);
+    }
+  } catch(e){ /* silent fail */ }
 }
 
 // ============ ANALYTICS ============
 function renderAnalytics(){
-  const closed=trades.filter(t=>t.status==='CLOSED'&&t.winLoss!=='NONE');
+  const allTrades=trades; const closed=trades.filter(t=>t.status==='CLOSED'&&t.winLoss!=='NONE');
   const wins=closed.filter(t=>t.winLoss==='WIN');
   const losses=closed.filter(t=>t.winLoss==='LOSS');
   const bes=closed.filter(t=>t.winLoss==='BREAKEVEN');
@@ -716,8 +848,8 @@ function renderAnalytics(){
   const lossT=Math.abs(losses.reduce((s,t)=>s+t.pnl,0));
   const pf=lossT>0?gains/lossT:(gains>0?99:1);
   const avg=closed.length?totalPnl/closed.length:0;
-  let tp=trades.length*8, logged=0;
-  trades.forEach(t=>{const u=new Set((t.logs||[]).map(l=>l.phase));PHASES.forEach(p=>{if(u.has(p))logged++;});});
+  let tp=allTrades.length*8, logged=0;
+  allTrades.forEach(t=>{const u=new Set((t.logs||[]).map(l=>l.phase));PHASES.forEach(p=>{if(u.has(p))logged++;});});
   const disc=tp>0?(logged/tp*100):0;
   const pnlFmt=totalPnl>=0?`+₹${totalPnl.toFixed(0)}`:`-₹${Math.abs(totalPnl).toFixed(0)}`;
   const pnlC=totalPnl>=0?'var(--green)':'var(--red)';
