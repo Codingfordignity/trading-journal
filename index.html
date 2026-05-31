@@ -276,6 +276,56 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
   <!-- ANALYTICS -->
   <div class="screen" id="screen-analytics">
     <div class="section-label">PERFORMANCE ANALYTICS</div>
+
+    <!-- HISTORICAL BASELINE - 1 Year NIFTY Data -->
+    <div style="margin:0 18px 14px;background:var(--card);border-radius:12px;border:1px solid rgba(245,158,11,0.3);overflow:hidden">
+      <div style="background:rgba(245,158,11,0.08);padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--amber)">HISTORICAL BASELINE</span>
+        <span style="font-size:10px;color:var(--muted)">Jun 2025 - May 2026 | 120 NIFTY trades</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border)">
+        <div style="background:var(--card);padding:12px;text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-family:var(--mono)">WIN RATE</div>
+          <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--amber)">48.3%</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">58W - 61L</div>
+        </div>
+        <div style="background:var(--card);padding:12px;text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-family:var(--mono)">NET PnL</div>
+          <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--red)">-1,11,403</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">Rs.</div>
+        </div>
+        <div style="background:var(--card);padding:12px;text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-family:var(--mono)">PROFIT FACTOR</div>
+          <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--red)">0.28</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">needs &gt;1.0</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border)">
+        <div style="background:var(--card);padding:12px;text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-family:var(--mono)">AVG WIN</div>
+          <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--green)">+763</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">Rs.</div>
+        </div>
+        <div style="background:var(--card);padding:12px;text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-family:var(--mono)">AVG LOSS</div>
+          <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--red)">-2,552</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">Rs. (3.3x wins)</div>
+        </div>
+        <div style="background:var(--card);padding:12px;text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-family:var(--mono)">EXPIRED LOSS</div>
+          <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--red)">-1,13,148</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">27 trades</div>
+        </div>
+      </div>
+      <!-- Key insight bar -->
+      <div style="padding:10px 14px;border-top:1px solid var(--border);background:rgba(16,185,129,0.05)">
+        <div style="font-size:11px;color:var(--green);line-height:1.5">
+          <span style="font-weight:700">Key finding:</span> Trades exited within 60 min = Rs.+20,893 profit at 68% WR. Expired options = Rs.-1,13,148 loss. Fix exits, fix everything.
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label" style="padding-top:4px">CURRENT JOURNAL STATS</div>
     <div class="stats-grid" id="stats-grid"></div>
     <div id="analytics-body"></div>
   </div>
