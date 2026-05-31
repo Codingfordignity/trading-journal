@@ -294,6 +294,30 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
     <div class="playbook-list" id="playbook-list"></div>
   </div>
 
+  <!-- INSIGHTS -->
+  <div class="screen" id="screen-insights">
+    <div class="section-label">AI INSIGHTS</div>
+    <div class="section-sub">Patterns and observations from your trading data</div>
+
+    <!-- HISTORICAL PATTERNS - hardcoded from 1 year data analysis -->
+    <div style="margin:0 18px 14px;padding:14px;background:var(--card);border-radius:12px;border:1px solid rgba(245,158,11,0.3)">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--amber);margin-bottom:12px">HISTORICAL PATTERNS - 120 NIFTY TRADES (Jun 2025 - May 2026)</div>
+      <div id="historical-insights" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+
+    <!-- LIVE AI INSIGHTS -->
+    <div style="padding:0 18px 14px">
+      <button onclick="generateInsights()" id="insights-btn" style="width:100%;background:var(--card);border:1px solid var(--green);color:var(--green);font-family:var(--mono);font-size:12px;letter-spacing:1px;padding:12px;border-radius:10px;cursor:pointer">
+        [AI] GENERATE LIVE INSIGHTS
+      </button>
+    </div>
+    <div id="insights-container" style="padding:0 18px;display:flex;flex-direction:column;gap:10px"></div>
+    <div style="margin:18px;padding:14px;background:var(--card);border-radius:12px;border:1px solid var(--border)">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--amber);margin-bottom:10px">WEEKLY SUMMARY</div>
+      <div id="weekly-summary-content" style="font-size:13px;color:var(--muted);line-height:1.7">Tap Generate Live Insights to load your weekly summary.</div>
+    </div>
+  </div>
+
   <!-- CLOUD -->
   <div class="screen" id="screen-cloud">
     <div class="section-label">CLOUD SYNC</div>
@@ -386,6 +410,11 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
     <div class="nav-bar"></div>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
     Playbook
+  </button>
+  <button class="nav-item" id="nav-insights" onclick="showScreen('insights')">
+    <div class="nav-bar"></div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    Insights
   </button>
   <button class="nav-item" id="nav-cloud" onclick="showScreen('cloud')">
     <div class="nav-bar"></div>
@@ -585,7 +614,6 @@ function showSaveIndicator(){
 setInterval(function(){
   if(trades.length>0){
     localStorage.setItem('tj_autobackup',JSON.stringify({trades,principles,savedAt:Date.now()}));
-    console.log('Auto-backup saved at',new Date().toLocaleTimeString());
   }
 },5*60*1000);
 
@@ -618,6 +646,7 @@ function showScreen(name){
   else { fabMain.style.display='none'; fabAi.style.display='none'; }
   currentScreen=name;
   if(name==='analytics') renderAnalytics();
+  if(name==='insights') initInsightsScreen();
   if(name==='cloud') renderCloud();
   if(name==='journal') renderTradeList();
   if(name==='playbook') renderPlaybook();
@@ -1194,6 +1223,165 @@ async function importFromScreenshot(input){
     statusEl.innerHTML="<div class='status-box status-err'>AI could not read screenshot: "+err.message+"</div>";
   }
   input.value="";
+}
+
+// ============ INSIGHTS ============
+function renderHistoricalInsights(){
+  const insights = [
+    {
+      cat:'CRITICAL',color:'var(--red)',
+      title:'Averaging Down is Your #1 Loss Driver',
+      body:'31% of your trades involved averaging down (multiple buys). These 37 trades produced Rs.-92,389 in losses at only 27% win rate. Your 83 single-entry trades had 58% win rate. Averaging down is destroying your account - it is not a strategy, it is hope disguised as a trade.'
+    },
+    {
+      cat:'CRITICAL',color:'var(--red)',
+      title:'Expired Options = 100% of Your Net Loss',
+      body:'27 trades (23 fully + 4 partially) expired worthless, costing Rs.-1,13,148. Your total PnL is Rs.-1,11,403. This means your expired options alone exceed your total losses - your actively managed trades are actually slightly profitable. You do not have a stock-picking problem. You have an exit discipline problem.'
+    },
+    {
+      cat:'CRITICAL',color:'var(--red)',
+      title:'Your Risk:Reward is Structurally Broken',
+      body:'Average win: Rs.763. Average loss: Rs.-2,552. Your losses are 3.3x your wins. To break even you need a 77% win rate - you are running at 48%. Even if you improve to 60% win rate, you will still lose money at this ratio. You must either cut losses faster or hold winners longer - or both.'
+    },
+    {
+      cat:'WARNING',color:'var(--amber)',
+      title:'Holding Beyond 1 Hour Destroys Profits',
+      body:'Trades held under 60 minutes: 66-80% win rate, Rs.+20,893 total profit. Trades held 1-4 hours: 24% win rate, Rs.-16,917 loss. Trades held over 4 hours: Rs.-23,582 loss. Your edge exists only in short timeframes. You are overstaying your welcome on every losing trade.'
+    },
+    {
+      cat:'WARNING',color:'var(--amber)',
+      title:'Cheap Options Are a Trap',
+      body:'Options bought below Rs.20 premium: 37% win rate, Rs.-14,241 total loss. Options above Rs.60: 57% win rate and better outcomes. You gravitate toward cheap out-of-the-money options hoping for big moves - but they expire worthless far more often. Your best results come from options with meaningful premium.'
+    },
+    {
+      cat:'PATTERN',color:'var(--cyan)',
+      title:'Your Short-Term Trades Are Actually Profitable',
+      body:'Trades exited within 60 minutes produced Rs.+20,893 in profit across 74 trades at 68% win rate. This is your edge. The problem is you override this edge by holding losers too long and averaging down. If you had exited every trade within 60 minutes, you would be profitable on the year.'
+    },
+    {
+      cat:'PATTERN',color:'var(--cyan)',
+      title:'February 2026 - A Month of Revenge Trading',
+      body:'Feb 2026: 26 trades, Rs.-46,924 loss - accounting for 42% of your annual losses in one month. The pattern: loss on Feb 2 triggered aggressive averaging down on Feb 3 (NIFTY26203 26000CE), resulting in your largest single loss of Rs.-19,090. One bad trade led to your worst month. You must have a monthly loss limit.'
+    },
+    {
+      cat:'POSITIVE',color:'var(--green)',
+      title:'CE and PE Win Rates Are Equal - Good Sign',
+      body:'CE trades: 48.7% WR. PE trades: 47.7% WR. Your directional read is balanced - you are not systematically wrong on direction. The losses come from position management after entry, not from picking the wrong direction. This means your market reading is sound - just the execution needs fixing.'
+    }
+  ];
+
+  const container = document.getElementById('historical-insights');
+  if(!container) return;
+  container.innerHTML = insights.map(ins =>
+    '<div style="border-left:3px solid '+ins.color+';padding:10px 12px;background:rgba(0,0,0,0.2);border-radius:6px">' +
+    '<div style="display:flex;justify-content:space-between;margin-bottom:5px">' +
+    '<span style="font-family:var(--mono);font-size:9px;letter-spacing:1px;color:'+ins.color+'">'+ins.cat+'</span></div>' +
+    '<div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:5px">'+ins.title+'</div>' +
+    '<div style="font-size:12px;color:var(--muted2);line-height:1.6">'+ins.body+'</div></div>'
+  ).join('');
+}
+
+function initInsightsScreen(){
+  renderHistoricalInsights();
+  // Check if weekly summary needs to be shown
+  checkWeeklySummary();
+  // Show last cached insights if available
+  const cached=localStorage.getItem('tj_insights');
+  if(cached){
+    try{
+      const data=JSON.parse(cached);
+      renderInsightCards(data.insights, data.summary, data.generatedAt);
+    }catch(e){}
+  }
+}
+
+function buildTradeContext(){
+  const closed=trades.filter(t=>t.status==='CLOSED'&&t.winLoss!=='NONE');
+  const wins=closed.filter(t=>t.winLoss==='WIN');
+  const losses=closed.filter(t=>t.winLoss==='LOSS');
+  const totalPnl=closed.reduce((s,t)=>s+t.pnl,0);
+  const wr=closed.length?(wins.length/closed.length*100).toFixed(1):0;
+  // Build compact trade summary for AI
+  const tradeSummary=closed.map(t=>{
+    const date=new Date(t.createdAt).toISOString().slice(0,10);
+    const phases=(t.logs||[]).map(l=>l.phase).join(',');
+    const emo=(t.logs||[]).map(l=>l.emotionalState).filter(Boolean).join(',');
+    return date+'|'+t.symbol+'|'+t.direction+'|E:'+t.entryPrice+'|X:'+t.exitPrice+'|Qty:'+t.quantity+'|PnL:'+t.pnl+'|'+t.winLoss+'|Grade:'+t.grade+'|Phases:'+phases+'|Emotions:'+emo;
+  }).join('\n');
+  // This week's trades
+  const weekAgo=Date.now()-7*24*60*60*1000;
+  const weekTrades=closed.filter(t=>t.createdAt>=weekAgo);
+  const weekPnl=weekTrades.reduce((s,t)=>s+t.pnl,0);
+  const weekWins=weekTrades.filter(t=>t.winLoss==='WIN').length;
+  return {tradeSummary,totalTrades:closed.length,wins:wins.length,losses:losses.length,wr,totalPnl:totalPnl.toFixed(0),weekTrades:weekTrades.length,weekWins,weekPnl:weekPnl.toFixed(0)};
+}
+
+async function generateInsights(){
+  const btn=document.getElementById('insights-btn');
+  const container=document.getElementById('insights-container');
+  btn.textContent='[AI] ANALYSING YOUR TRADES...';
+  btn.disabled=true;
+  container.innerHTML='<div style="text-align:center;padding:30px;color:var(--muted);font-size:13px">Analysing your trading patterns...</div>';
+  try{
+    const ctx=buildTradeContext();
+    if(ctx.totalTrades<3){
+      container.innerHTML='<div style="text-align:center;padding:30px;color:var(--muted);font-size:13px">Need at least 3 closed trades to generate insights.</div>';
+      btn.textContent='[AI] GENERATE INSIGHTS'; btn.disabled=false; return;
+    }
+    const prompt='You are a trading performance coach. Analyse this traders journal data and generate exactly 6 specific actionable insights plus a weekly summary. Return ONLY valid JSON with keys: insights (array of {title,observation,category,type}) and weeklySummary (string). Categories: performance|psychology|risk|pattern. Types: positive|warning|neutral. Be specific, use actual numbers. Trade data: Total:'+ctx.totalTrades+' Wins:'+ctx.wins+' Losses:'+ctx.losses+' WR:'+ctx.wr+'% PnL:Rs.'+ctx.totalPnl+' Week:'+ctx.weekTrades+' trades '+ctx.weekWins+' wins Rs.'+ctx.weekPnl+' Log:'+ctx.tradeSummary;
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await resp.json();
+    const text=data.content?.map(c=>c.text||'').join('')||'';
+    const result=JSON.parse(text.replace(/```json|```/g,'').trim());
+    localStorage.setItem('tj_insights',JSON.stringify({insights:result.insights,summary:result.weeklySummary,generatedAt:Date.now()}));
+    renderInsightCards(result.insights, result.weeklySummary, Date.now());
+    localStorage.setItem('tj_lastweeklyreview',new Date().toISOString().slice(0,10));
+  }catch(err){
+    container.innerHTML='<div style="padding:16px;background:var(--red-dim);border-radius:10px;color:var(--white);font-size:13px">Could not generate insights: '+err.message+'</div>';
+  }
+  btn.textContent='[AI] REFRESH INSIGHTS'; btn.disabled=false;
+}
+
+function renderInsightCards(insights, summary, generatedAt){
+  const container=document.getElementById('insights-container');
+  const timeAgo=generatedAt?'Generated '+new Date(generatedAt).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'';
+  const catColors={performance:'var(--green)',psychology:'var(--cyan)',risk:'var(--red)',pattern:'var(--amber)'};
+  const typeIcons={positive:'[+]',warning:'[!]',neutral:'[i]'};
+  const typeColors={positive:'var(--green)',warning:'var(--red)',neutral:'var(--muted2)'};
+  container.innerHTML=(timeAgo?'<div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-bottom:6px">'+timeAgo+'</div>':'')+
+  (insights||[]).map(ins=>{
+    const cc=catColors[ins.category]||'var(--muted2)';
+    const ic=typeIcons[ins.type]||'[i]';
+    const tc=typeColors[ins.type]||'var(--muted2)';
+    return '<div style="background:var(--card);border-radius:12px;border:1px solid var(--border);padding:14px;border-left:3px solid '+cc+'">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'+
+      '<span style="font-family:var(--mono);font-size:10px;letter-spacing:1px;color:'+cc+'">'+ins.category.toUpperCase()+'</span>'+
+      '<span style="font-size:11px;color:'+tc+'">'+ic+' '+ins.type+'</span></div>'+
+      '<div style="font-size:14px;font-weight:600;color:var(--white);margin-bottom:6px">'+ins.title+'</div>'+
+      '<div style="font-size:12px;color:var(--muted2);line-height:1.6">'+ins.observation+'</div></div>';
+  }).join('');
+  // Update weekly summary
+  const ws=document.getElementById('weekly-summary-content');
+  if(ws&&summary) ws.innerHTML='<span style="color:var(--white)">'+summary+'</span>';
+}
+
+function checkWeeklySummary(){
+  const lastReview=localStorage.getItem('tj_lastweeklyreview');
+  const today=new Date().toISOString().slice(0,10);
+  const dayOfWeek=new Date().getDay(); // 0=Sunday
+  if(dayOfWeek===0&&lastReview!==today&&trades.filter(t=>t.status==='CLOSED').length>=3){
+    // It's Sunday and not yet reviewed today - show prompt
+    const toast=document.createElement('div');
+    toast.style.cssText='position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--amber);color:var(--amber);font-family:var(--mono);font-size:11px;padding:10px 16px;border-radius:20px;z-index:999;cursor:pointer;white-space:nowrap';
+    toast.textContent='[Sun] Weekly review ready - tap Insights';
+    toast.onclick=()=>{showScreen("insights");generateInsights();toast.remove();};
+    document.body.appendChild(toast);
+    setTimeout(()=>{if(toast.parentNode)toast.remove();},8000);
+  }
 }
 
 // ============ INIT ============
