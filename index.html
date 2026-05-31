@@ -198,9 +198,12 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
     <span class="dot" id="conn-dot"></span>
     <span class="topbar-title">TRADING JOURNAL</span>
   </div>
-  <button class="btn-icon" onclick="syncNow()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
-  </button>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span id="save-indicator" style="font-size:10px;font-family:var(--mono);color:var(--green);opacity:0;transition:opacity 0.3s">SAVED</span>
+    <button class="btn-icon" onclick="syncNow()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+    </button>
+  </div>
 </div>
 
 <div class="main">
@@ -326,6 +329,27 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
         <input type="file" accept=".json" onchange="loadBackup(this)" style="display:none">
       </label>
       <div id="restore-status" style="margin-top:10px"></div>
+    </div>
+
+    <!-- ZERODHA IMPORT CARD -->
+    <div class="cloud-card">
+      <h3>IMPORT FROM ZERODHA</h3>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6">Import your Zerodha tradebook CSV to auto-create trade entries with symbol, entry, exit and P&L pre-filled. Download from Kite: Console > Reports > Tradebook > F&O > Download CSV.</p>
+      <label style="display:block;width:100%;margin-bottom:10px">
+        <div style="width:100%;text-align:center;padding:14px;font-size:15px;cursor:pointer;border-radius:8px;border:1px solid var(--green);color:var(--green);font-family:var(--sans);font-weight:600">
+          [+] Import Zerodha Tradebook CSV
+        </div>
+        <input type="file" accept=".csv" onchange="importZerodhaCSV(this)" style="display:none">
+      </label>
+      <div style="height:1px;background:var(--border);margin:12px 0"></div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6">Or take a screenshot of your Kite Positions/Orders screen and let AI read it automatically.</p>
+      <label style="display:block;width:100%">
+        <div style="width:100%;text-align:center;padding:14px;font-size:15px;cursor:pointer;border-radius:8px;border:1px solid var(--cyan);color:var(--cyan);font-family:var(--sans);font-weight:600">
+          [cam] Import from Screenshot (AI)
+        </div>
+        <input type="file" accept="image/*" onchange="importFromScreenshot(this)" style="display:none">
+      </label>
+      <div id="import-zerodha-status" style="margin-top:10px"></div>
     </div>
   </div>
 </div>
@@ -543,7 +567,39 @@ function save(){
   localStorage.setItem('tj_trades',JSON.stringify(trades));
   localStorage.setItem('tj_principles',JSON.stringify(principles));
   localStorage.setItem('tj_lastsync',Date.now().toString());
+  // Keep a rolling auto-backup in localStorage as safety net
+  localStorage.setItem('tj_autobackup',JSON.stringify({trades,principles,savedAt:Date.now()}));
   updateLastSync();
+  showSaveIndicator();
+}
+
+function showSaveIndicator(){
+  const el=document.getElementById('save-indicator');
+  if(!el) return;
+  el.style.opacity='1';
+  clearTimeout(window._saveTimer);
+  window._saveTimer=setTimeout(()=>el.style.opacity='0',1500);
+}
+
+// Periodic backup to localStorage every 5 minutes
+setInterval(function(){
+  if(trades.length>0){
+    localStorage.setItem('tj_autobackup',JSON.stringify({trades,principles,savedAt:Date.now()}));
+    console.log('Auto-backup saved at',new Date().toLocaleTimeString());
+  }
+},5*60*1000);
+
+// On page load, check if we have newer auto-backup than main data
+function checkAutoBackup(){
+  try{
+    const backup=JSON.parse(localStorage.getItem('tj_autobackup')||'{}');
+    const lastSync=parseInt(localStorage.getItem('tj_lastsync')||'0');
+    if(backup.savedAt && backup.savedAt > lastSync && Array.isArray(backup.trades) && backup.trades.length >= trades.length){
+      trades=backup.trades;
+      principles=backup.principles||[];
+      console.log('Restored from auto-backup');
+    }
+  } catch(e){}
 }
 function genId(){ return Date.now()+Math.floor(Math.random()*1000); }
 
@@ -1028,8 +1084,120 @@ function openModal(id){ document.getElementById(id).style.display='flex'; docume
 function closeModal(id){ document.getElementById(id).style.display='none'; document.body.style.overflow=''; }
 function setFilter(f,el){ currentFilter=f; document.querySelectorAll('#filter-chips .chip').forEach(c=>c.classList.remove('active')); el.classList.add('active'); renderTradeList(); }
 
+// ============ ZERODHA CSV IMPORT ============
+function importZerodhaCSV(input){
+  const file=input.files[0]; if(!file) return;
+  const statusEl=document.getElementById('import-zerodha-status');
+  statusEl.innerHTML='<div class="status-box" style="background:var(--cyan-dim);color:var(--cyan);border:1px solid var(--cyan)">Reading CSV...</div>';
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const text=e.target.result;
+      const lines=text.trim().split('\n');
+      const headers=lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+      const rows=[];
+      for(let i=1;i<lines.length;i++){
+        if(!lines[i].trim()) continue;
+        const vals=lines[i].split(',');
+        const row={};
+        headers.forEach((h,j)=>row[h]=(vals[j]||'').trim().replace(/"/g,''));
+        rows.push(row);
+      }
+      const bySymDate={};
+      rows.forEach(r=>{
+        const sym=r['symbol']||''; const date=r['trade_date']||'';
+        if(!sym||!date) return;
+        const key=sym+'|'+date;
+        if(!bySymDate[key]) bySymDate[key]=[];
+        bySymDate[key].push(r);
+      });
+      let added=0, skipped=0;
+      Object.entries(bySymDate).forEach(([key,orders])=>{
+        const parts=key.split('|'); const symbol=parts[0]; const tradeDate=parts[1];
+        const exists=trades.find(t=>t.symbol===symbol&&new Date(t.createdAt).toISOString().slice(0,10)===tradeDate);
+        if(exists){ skipped++; return; }
+        const buys=orders.filter(o=>o['trade_type']==='buy');
+        const sells=orders.filter(o=>o['trade_type']==='sell');
+        const totalBuyQty=buys.reduce((s,o)=>s+parseFloat(o['quantity']||0),0);
+        const totalSellQty=sells.reduce((s,o)=>s+parseFloat(o['quantity']||0),0);
+        if(totalBuyQty===0) return;
+        const avgEntry=buys.reduce((s,o)=>s+parseFloat(o['price']||0)*parseFloat(o['quantity']||0),0)/totalBuyQty;
+        const avgExit=totalSellQty>0?sells.reduce((s,o)=>s+parseFloat(o['price']||0)*parseFloat(o['quantity']||0),0)/totalSellQty:0;
+        const direction=symbol.includes('CE')?'BUY':'SELL';
+        const soldPnl=totalSellQty>0?(avgExit-avgEntry)*totalSellQty:0;
+        const expiredQty=totalBuyQty-totalSellQty;
+        const expiredPnl=expiredQty>0?(0-avgEntry)*expiredQty:0;
+        const pnl=Math.round((soldPnl+expiredPnl)*100)/100;
+        const winLoss=pnl>0?'WIN':pnl<0?'LOSS':'BREAKEVEN';
+        const createdAt=new Date(tradeDate).getTime();
+        const entryTime=buys[0]?buys[0]['order_execution_time']||'':'';
+        const exitTime=sells.length?sells[sells.length-1]['order_execution_time']||'':'';
+        const expNote=expiredQty>0?' | '+expiredQty+' qty expired worthless':'';
+        const newTrade={
+          id:genId()+Math.floor(Math.random()*999),
+          symbol,direction,status:'CLOSED',
+          entryPrice:Math.round(avgEntry*100)/100,
+          exitPrice:Math.round(avgExit*100)/100,
+          stopLoss:0,takeProfit:0,
+          quantity:totalBuyQty,pnl,winLoss,grade:'',
+          createdAt,updatedAt:Date.now(),
+          logs:[{phase:'EXECUTE',notes:'Entry: '+symbol+' @ Rs.'+Math.round(avgEntry*100)/100+' x '+totalBuyQty+' qty'+(entryTime?' at '+entryTime.replace('T',' ').slice(0,16):''),emotionalState:'',marketCondition:'',extractedKeywords:'zerodha-import',timestamp:createdAt}]
+        };
+        if(totalSellQty>0||expiredQty>0){
+          newTrade.logs.push({phase:'EXIT',notes:(totalSellQty>0?'Exit @ Rs.'+Math.round(avgExit*100)/100+' x '+totalSellQty+' qty'+(exitTime?' at '+exitTime.replace('T',' ').slice(0,16):''):'No exit - expired worthless')+expNote+' | P&L: Rs.'+(pnl>=0?'+':'')+pnl,emotionalState:'',marketCondition:'',extractedKeywords:'zerodha-import',timestamp:Date.now()});
+        }
+        trades.unshift(newTrade); added++;
+      });
+      trades.sort((a,b)=>b.createdAt-a.createdAt);
+      save(); renderTradeList();
+      statusEl.innerHTML='<div class="status-box status-ok">[OK] Imported '+added+' trades. '+skipped+' duplicates skipped.</div>';
+    } catch(err){
+      statusEl.innerHTML='<div class="status-box status-err">Error: '+err.message+'</div>';
+    }
+  };
+  reader.readAsText(file);
+  input.value='';
+}
+
+// ============ SCREENSHOT IMPORT (AI) ============
+async function importFromScreenshot(input){
+  const file=input.files[0]; if(!file) return;
+  const statusEl=document.getElementById("import-zerodha-status");
+  statusEl.innerHTML="<div class='status-box' style='background:var(--cyan-dim);color:var(--cyan);border:1px solid var(--cyan)'>AI is reading screenshot...</div>";
+  try{
+    const base64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(file);});
+    const prompt="Extract all trades from this Zerodha Kite screenshot. Return ONLY a JSON array. Each: {symbol,direction(BUY/SELL),entryPrice,exitPrice,quantity,pnl,entryTime,exitTime}. CE=BUY,PE=SELL. Use 0 if not visible.";
+    const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1500,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type,data:base64}},{type:"text",text:prompt}]}]})});
+    const data=await resp.json();
+    const text=data.content?.map(c=>c.text||"").join("")||"";
+    const result=JSON.parse(text.replace(/```json|```/g,"").trim());
+    let added=0,skipped=0;
+    const today=new Date().toISOString().slice(0,10);
+    result.forEach(item=>{
+      if(!item.symbol) return;
+      if(trades.find(t=>t.symbol===item.symbol&&new Date(t.createdAt).toISOString().slice(0,10)===today)){skipped++;return;}
+      const ep=item.entryPrice||0,xp=item.exitPrice||0,qty=item.quantity||0;
+      let pnl=item.pnl||0;
+      if(!pnl&&ep>0&&xp>0&&qty>0) pnl=Math.round((xp-ep)*qty*100)/100;
+      const wl=pnl>0?"WIN":pnl<0?"LOSS":xp>0?"BREAKEVEN":"NONE";
+      const status=xp>0?"CLOSED":pnl!==0?"ACTIVE":"PLANNING";
+      const now=Date.now();
+      const logs=[{phase:"EXECUTE",notes:"Entry: "+item.symbol+" @ Rs."+ep+" x "+qty+" qty"+(item.entryTime?" at "+item.entryTime:""),emotionalState:"",marketCondition:"",extractedKeywords:"screenshot-import",timestamp:now}];
+      if(xp>0||pnl!==0) logs.push({phase:"EXIT",notes:(xp>0?"Exit @ Rs."+xp+" x "+qty+" qty"+(item.exitTime?" at "+item.exitTime:""):"Closed")+" | P&L: Rs."+(pnl>=0?"+":"")+pnl,emotionalState:"",marketCondition:"",extractedKeywords:"screenshot-import",timestamp:now});
+      trades.unshift({id:genId()+Math.floor(Math.random()*999),symbol:item.symbol,direction:item.direction||"BUY",status,entryPrice:ep,exitPrice:xp,stopLoss:0,takeProfit:0,quantity:qty,pnl,winLoss:wl,grade:"",createdAt:now,updatedAt:now,logs});
+      added++;
+    });
+    trades.sort((a,b)=>b.createdAt-a.createdAt);
+    save();renderTradeList();
+    statusEl.innerHTML="<div class='status-box status-ok'>[OK] Imported "+added+" trades. "+skipped+" duplicates skipped.</div>";
+  }catch(err){
+    statusEl.innerHTML="<div class='status-box status-err'>AI could not read screenshot: "+err.message+"</div>";
+  }
+  input.value="";
+}
+
 // ============ INIT ============
-load(); renderTradeList();
+load(); checkAutoBackup(); renderTradeList();
 </script>
 </body>
 </html>
