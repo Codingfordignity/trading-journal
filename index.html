@@ -282,7 +282,12 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
 
   <!-- PLAYBOOK -->
   <div class="screen" id="screen-playbook">
-    <div class="section-label">TRADING PLAYBOOK</div>
+    <div style="display:flex;align-items:center;padding:14px 18px 0;gap:10px">
+      <button onclick="showScreen('cloud')" style="background:none;border:none;color:var(--muted2);cursor:pointer;padding:2px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      </button>
+      <span style="font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--green)">TRADING PLAYBOOK</span>
+    </div>
     <div class="section-sub">Principles, patterns & lessons learned</div>
     <div class="chips" id="pb-chips">
       <div class="chip active" onclick="setPbFilter('ALL',this)">ALL</div>
@@ -320,7 +325,13 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
 
   <!-- CLOUD -->
   <div class="screen" id="screen-cloud">
-    <div class="section-label">CLOUD SYNC</div>
+    <div class="section-label">MORE</div>
+    <div style="padding:0 18px 14px;display:flex;gap:10px">
+      <button onclick="showScreen('playbook')" style="flex:1;background:var(--card);border:1px solid rgba(245,158,11,0.4);color:var(--amber);font-family:var(--mono);font-size:11px;letter-spacing:1px;padding:12px;border-radius:10px;cursor:pointer">
+        [=] PLAYBOOK
+      </button>
+    </div>
+    <div class="section-label" style="padding-top:4px">CLOUD SYNC</div>
     <div class="cloud-card">
       <h3>DEVICE STATUS</h3>
       <div class="row-between">
@@ -406,11 +417,6 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
     Stats
   </button>
-  <button class="nav-item" id="nav-playbook" onclick="showScreen('playbook')">
-    <div class="nav-bar"></div>
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-    Playbook
-  </button>
   <button class="nav-item" id="nav-insights" onclick="showScreen('insights')">
     <div class="nav-bar"></div>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -419,7 +425,7 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
   <button class="nav-item" id="nav-cloud" onclick="showScreen('cloud')">
     <div class="nav-bar"></div>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
-    Cloud
+    More
   </button>
 </nav>
 
