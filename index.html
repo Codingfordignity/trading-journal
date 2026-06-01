@@ -1249,49 +1249,45 @@ async function importFromScreenshot(input){
   const file=input.files[0]; if(!file) return;
   const statusEl=document.getElementById('import-zerodha-status');
   statusEl.innerHTML="<div class='status-box' style='background:var(--cyan-dim);color:var(--cyan);border:1px solid var(--cyan)'>Reading image...</div>";
-
   try{
-    // Use canvas approach - most reliable on iOS Safari
-    const base64 = await new Promise((res, rej) => {
-      const img = new Image();
-      const url = URL.createObjectURL(file);
-      img.onload = function(){
+    // Read as ArrayBuffer then convert to base64 - bypasses canvas taint on iOS
+    const base64 = await new Promise((res,rej)=>{
+      const reader = new FileReader();
+      reader.onload = function(){
         try{
-          const canvas = document.createElement('canvas');
-          // Resize if too large - max 1600px to keep API payload reasonable
-          const maxW = 1600;
-          let w = img.width, h = img.height;
-          if(w > maxW){ h = Math.round(h * maxW / w); w = maxW; }
-          canvas.width = w; canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-          URL.revokeObjectURL(url);
-          res(dataUrl.split(',')[1]);
-        } catch(e){ URL.revokeObjectURL(url); rej(e); }
+          const arr = new Uint8Array(reader.result);
+          let binary = '';
+          const chunkSize = 8192;
+          for(let i=0; i<arr.length; i+=chunkSize){
+            binary += String.fromCharCode.apply(null, arr.subarray(i, i+chunkSize));
+          }
+          res(btoa(binary));
+        }catch(e){ rej(e); }
       };
-      img.onerror = function(){ URL.revokeObjectURL(url); rej(new Error('Image failed to load')); };
-      img.src = url;
+      reader.onerror = function(){ rej(new Error('FileReader error: '+reader.error)); };
+      reader.readAsArrayBuffer(file);
     });
-
+    const mimeType = file.type && file.type.startsWith('image/') ? file.type : 'image/jpeg';
     statusEl.innerHTML="<div class='status-box' style='background:var(--cyan-dim);color:var(--cyan);border:1px solid var(--cyan)'>AI is reading your screenshot...</div>";
-
-    const prompt="This is a Zerodha Kite screenshot. Extract all trades. Return ONLY a JSON array. Each item: {symbol,direction,entryPrice,exitPrice,quantity,pnl,entryTime,exitTime}. CE=BUY direction, PE=SELL direction. Use 0 if not visible.";
-    const response=await fetch("https://api.anthropic.com/v1/messages",{
+    const prompt="This is a Zerodha Kite screenshot showing positions or orders. Extract all visible trades. Return ONLY a JSON array, no markdown. Each item must have: symbol (string), direction (BUY or SELL), entryPrice (number, use avg price if shown), exitPrice (number or 0), quantity (number), pnl (number or 0), entryTime (string or empty), exitTime (string or empty). For options: CE=BUY, PE=SELL. For equity/EQ: BUY if holding. Use 0 for missing values.";
+    const response = await fetch("https://api.anthropic.com/v1/messages",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({
         model:"claude-sonnet-4-20250514",
         max_tokens:1500,
         messages:[{role:"user",content:[
-          {type:"image",source:{type:"base64",media_type:"image/jpeg",data:base64}},
+          {type:"image",source:{type:"base64",media_type:mimeType,data:base64}},
           {type:"text",text:prompt}
         ]}]
       })
     });
-    const data=await response.json();
-    const text=data.content?.map(c=>c.text||"").join("")||"";
-    const result=JSON.parse(text.replace(/```json|```/g,"").trim());
+    if(!response.ok) throw new Error('API error: '+response.status);
+    const data = await response.json();
+    if(data.error) throw new Error(data.error.message||'API error');
+    const text = data.content?.map(c=>c.text||"").join("")||"";
+    const result = JSON.parse(text.replace(/```json|```/g,"").trim());
+    if(!Array.isArray(result)) throw new Error('Unexpected response format');
     let added=0, skipped=0;
     const today=new Date().toISOString().slice(0,10);
     result.forEach(item=>{
@@ -1304,15 +1300,15 @@ async function importFromScreenshot(input){
       const status=xp>0?"CLOSED":pnl!==0?"ACTIVE":"PLANNING";
       const now=Date.now();
       const logs=[{phase:"EXECUTE",notes:"Entry: "+item.symbol+" @ Rs."+ep+" x "+qty+" qty"+(item.entryTime?" at "+item.entryTime:""),emotionalState:"",marketCondition:"",extractedKeywords:"screenshot-import",timestamp:now}];
-      if(xp>0||pnl!==0) logs.push({phase:"EXIT",notes:(xp>0?"Exit @ Rs."+xp+" x "+qty+" qty"+(item.exitTime?" at "+item.exitTime:""):"Closed")+" | P&L: Rs."+(pnl>=0?"+":"")+pnl,emotionalState:"",marketCondition:"",extractedKeywords:"screenshot-import",timestamp:now});
+      if(xp>0||pnl!==0) logs.push({phase:"EXIT",notes:(xp>0?"Exit @ Rs."+xp+" x "+qty+" qty"+(item.exitTime?" at "+item.exitTime:""):"Position open")+" | P&L: Rs."+(pnl>=0?"+":"")+pnl,emotionalState:"",marketCondition:"",extractedKeywords:"screenshot-import",timestamp:now});
       trades.unshift({id:genId()+Math.floor(Math.random()*999),symbol:item.symbol,direction:item.direction||"BUY",status,entryPrice:ep,exitPrice:xp,stopLoss:0,takeProfit:0,quantity:qty,pnl,winLoss:wl,grade:"",createdAt:now,updatedAt:now,logs});
       added++;
     });
     trades.sort((a,b)=>b.createdAt-a.createdAt);
     save(); renderTradeList();
-    statusEl.innerHTML="<div class='status-box status-ok'>[OK] Imported "+added+" trades. "+skipped+" duplicates skipped.</div>";
-  } catch(err){
-    statusEl.innerHTML="<div class='status-box status-err'>Could not process screenshot: "+err.message+"</div>";
+    statusEl.innerHTML="<div class='status-box status-ok'>[OK] Imported "+added+" trade(s). "+skipped+" duplicate(s) skipped.</div>";
+  }catch(err){
+    statusEl.innerHTML="<div class='status-box status-err'>Error: "+err.message+"</div>";
   }
   input.value="";
 }
