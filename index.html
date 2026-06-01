@@ -1247,21 +1247,57 @@ function importZerodhaCSV(input){
 // ============ SCREENSHOT IMPORT (AI) ============
 async function importFromScreenshot(input){
   const file=input.files[0]; if(!file) return;
-  const statusEl=document.getElementById("import-zerodha-status");
-  statusEl.innerHTML="<div class='status-box' style='background:var(--cyan-dim);color:var(--cyan);border:1px solid var(--cyan)'>AI is reading screenshot...</div>";
+  const statusEl=document.getElementById('import-zerodha-status');
+  statusEl.innerHTML="<div class='status-box' style='background:var(--cyan-dim);color:var(--cyan);border:1px solid var(--cyan)'>Reading image...</div>";
+
   try{
-    const base64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(file);});
-    const prompt="Extract all trades from this Zerodha Kite screenshot. Return ONLY a JSON array. Each: {symbol,direction(BUY/SELL),entryPrice,exitPrice,quantity,pnl,entryTime,exitTime}. CE=BUY,PE=SELL. Use 0 if not visible.";
-    const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1500,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type,data:base64}},{type:"text",text:prompt}]}]})});
-    const data=await resp.json();
+    // Use canvas approach - most reliable on iOS Safari
+    const base64 = await new Promise((res, rej) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = function(){
+        try{
+          const canvas = document.createElement('canvas');
+          // Resize if too large - max 1600px to keep API payload reasonable
+          const maxW = 1600;
+          let w = img.width, h = img.height;
+          if(w > maxW){ h = Math.round(h * maxW / w); w = maxW; }
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          URL.revokeObjectURL(url);
+          res(dataUrl.split(',')[1]);
+        } catch(e){ URL.revokeObjectURL(url); rej(e); }
+      };
+      img.onerror = function(){ URL.revokeObjectURL(url); rej(new Error('Image failed to load')); };
+      img.src = url;
+    });
+
+    statusEl.innerHTML="<div class='status-box' style='background:var(--cyan-dim);color:var(--cyan);border:1px solid var(--cyan)'>AI is reading your screenshot...</div>";
+
+    const prompt="This is a Zerodha Kite screenshot. Extract all trades. Return ONLY a JSON array. Each item: {symbol,direction,entryPrice,exitPrice,quantity,pnl,entryTime,exitTime}. CE=BUY direction, PE=SELL direction. Use 0 if not visible.";
+    const response=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-20250514",
+        max_tokens:1500,
+        messages:[{role:"user",content:[
+          {type:"image",source:{type:"base64",media_type:"image/jpeg",data:base64}},
+          {type:"text",text:prompt}
+        ]}]
+      })
+    });
+    const data=await response.json();
     const text=data.content?.map(c=>c.text||"").join("")||"";
     const result=JSON.parse(text.replace(/```json|```/g,"").trim());
-    let added=0,skipped=0;
+    let added=0, skipped=0;
     const today=new Date().toISOString().slice(0,10);
     result.forEach(item=>{
       if(!item.symbol) return;
       if(trades.find(t=>t.symbol===item.symbol&&new Date(t.createdAt).toISOString().slice(0,10)===today)){skipped++;return;}
-      const ep=item.entryPrice||0,xp=item.exitPrice||0,qty=item.quantity||0;
+      const ep=item.entryPrice||0, xp=item.exitPrice||0, qty=item.quantity||0;
       let pnl=item.pnl||0;
       if(!pnl&&ep>0&&xp>0&&qty>0) pnl=Math.round((xp-ep)*qty*100)/100;
       const wl=pnl>0?"WIN":pnl<0?"LOSS":xp>0?"BREAKEVEN":"NONE";
@@ -1273,10 +1309,10 @@ async function importFromScreenshot(input){
       added++;
     });
     trades.sort((a,b)=>b.createdAt-a.createdAt);
-    save();renderTradeList();
+    save(); renderTradeList();
     statusEl.innerHTML="<div class='status-box status-ok'>[OK] Imported "+added+" trades. "+skipped+" duplicates skipped.</div>";
-  }catch(err){
-    statusEl.innerHTML="<div class='status-box status-err'>AI could not read screenshot: "+err.message+"</div>";
+  } catch(err){
+    statusEl.innerHTML="<div class='status-box status-err'>Could not process screenshot: "+err.message+"</div>";
   }
   input.value="";
 }
