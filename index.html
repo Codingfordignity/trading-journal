@@ -775,7 +775,18 @@ function fabMainClick(){
 // ============ TRADE LIST ============
 function renderTradeList(){
   const list = document.getElementById('trade-list');
-  let filtered = currentFilter==='ALL' ? trades : trades.filter(t=>t.status===currentFilter);
+  // Merge trades and session logs sorted by date
+  let allItems=[];
+  if(currentFilter==='ALL'||currentFilter==='SESSION'){
+    (sessions||[]).forEach(s=>allItems.push({...s,_type:'session'}));
+  }
+  if(currentFilter!=='SESSION'){
+    let filtered=currentFilter==='ALL'?trades:trades.filter(t=>t.status===currentFilter);
+    filtered.forEach(t=>allItems.push({...t,_type:'trade'}));
+  }
+  allItems.sort((a,b)=>b.createdAt-a.createdAt);
+  const filteredItems=allItems;
+  const filtered=filteredItems;
   if(!filteredItems.length){
     list.innerHTML=`<div class="empty-state"><div class="empty-icon"></div><div class="empty-title">No logs found.</div><div class="empty-sub">Tap + to begin logging your next trade. Every log brings you closer to the One Big Trade.</div></div>`;
     return;
@@ -1868,6 +1879,19 @@ function saveEveningReview(){
 
 // ============ INIT ============
 load(); checkAutoBackup(); renderTradeList();
+// Seed curriculum on first load
+if(principles.length===0){
+  const curriculum=[
+    {id:1,title:'Phase 1 — HTML + CSS + JavaScript',body:'Goal: Understand the building blocks of every web app including OBT. Start at freeCodeCamp.org — Responsive Web Design certification. 1 hour daily. First milestone: open OBT index.html in a text editor and recognise what each line does.',category:'general',source:'OBT Learning Curriculum',createdAt:Date.now(),updatedAt:Date.now()},
+    {id:2,title:'Phase 2 — React',body:'Goal: Build dynamic UIs. React is what powers modern web apps. Once you know React, React Native for mobile is a natural extension. Build a mini version of OBT in React — every concept will have immediate application.',category:'general',source:'OBT Learning Curriculum',createdAt:Date.now(),updatedAt:Date.now()},
+    {id:3,title:'Phase 3 — React Native',body:'Goal: Build OBT as a native iOS app. Camera access, clipboard, file system, App Store. Expo makes React Native dramatically simpler to start with. Your spec is already written — OBT is the project.',category:'general',source:'OBT Learning Curriculum',createdAt:Date.now(),updatedAt:Date.now()},
+    {id:4,title:'Phase 4 — Backend (Node.js + Supabase)',body:'Goal: Real cloud sync, team accounts, data persistence. Supabase is free to start and handles auth, database, and real-time sync. This is what makes OBT a proper multi-device, multi-user product.',category:'general',source:'OBT Learning Curriculum',createdAt:Date.now(),updatedAt:Date.now()},
+    {id:5,title:'First Coding Milestone',body:'Make one small change to OBT yourself — change a colour, a label, or a button text. Open index.html in a text editor, find the line, change it, save it, upload to GitHub, see it live on your phone. That first successful change is the moment everything clicks.',category:'general',source:'OBT Learning Curriculum',createdAt:Date.now(),updatedAt:Date.now()},
+    {id:6,title:'Learning Principle — Build Real Things',body:'Never learn in the abstract. Every concept must connect to OBT or TPE immediately. When you learn about arrays in JavaScript, find where arrays are used in OBT. When you learn about functions, find a function in OBT and read it. Real projects make concepts stick.',category:'general',source:'OBT Learning Curriculum',createdAt:Date.now(),updatedAt:Date.now()}
+  ];
+  curriculum.forEach(p=>principles.push(p));
+  save();
+}
 </script>
 </body>
 </html>
