@@ -6,7 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0A0F1E">
-<title>Trading Journal</title>
+<meta name="apple-mobile-web-app-title" content="OBT">
+<title>OBT — One Big Trade</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0A0F1E;--surface:#111827;--card:#1A2235;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--green:#10B981;--green-dim:rgba(16,185,129,0.12);--red:#F43F5E;--red-dim:rgba(244,63,94,0.12);--cyan:#06B6D4;--cyan-dim:rgba(6,182,212,0.12);--amber:#F59E0B;--amber-dim:rgba(245,158,11,0.12);--white:#F0F4FF;--muted:#64748B;--muted2:#94A3B8;--mono:'Space Mono',monospace;--sans:'DM Sans',sans-serif}
@@ -196,7 +197,7 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
 <div class="topbar">
   <div style="display:flex;align-items:center">
     <span class="dot" id="conn-dot"></span>
-    <span class="topbar-title">TRADING JOURNAL</span>
+    <span class="topbar-title">O·B·T</span>
   </div>
   <div style="display:flex;align-items:center;gap:10px">
     <span id="save-indicator" style="font-size:10px;font-family:var(--mono);color:var(--green);opacity:0;transition:opacity 0.3s">SAVED</span>
@@ -216,6 +217,7 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
       <div class="chip" onclick="setFilter('PLANNING',this)">PLANNING</div>
       <div class="chip" onclick="setFilter('ACTIVE',this)">ACTIVE</div>
       <div class="chip" onclick="setFilter('CLOSED',this)">CLOSED</div>
+      <div class="chip" onclick="setFilter('SESSION',this)">SESSIONS</div>
     </div>
     <div class="trade-list" id="trade-list"></div>
   </div>
@@ -277,52 +279,13 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
   <div class="screen" id="screen-analytics">
     <div class="section-label">PERFORMANCE ANALYTICS</div>
 
-    <!-- HISTORICAL BASELINE - 1 Year NIFTY Data -->
+    <!-- HISTORICAL BASELINE - dynamic from CSV -->
     <div style="margin:0 18px 14px;background:var(--card);border-radius:12px;border:1px solid rgba(245,158,11,0.3);overflow:hidden">
       <div style="background:rgba(245,158,11,0.08);padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
         <span style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--amber)">HISTORICAL BASELINE</span>
-        <span style="font-size:10px;color:var(--muted)">Jun 2025 - May 2026 | 120 NIFTY trades</span>
+        <span style="font-size:10px;color:var(--muted)">from your Zerodha CSV</span>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border)">
-        <div style="background:var(--card);padding:12px;text-align:center">
-          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-family:var(--mono)">WIN RATE</div>
-          <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--amber)">48.3%</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px">58W - 61L</div>
-        </div>
-        <div style="background:var(--card);padding:12px;text-align:center">
-          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-family:var(--mono)">NET PnL</div>
-          <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--red)">-1,11,403</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px">Rs.</div>
-        </div>
-        <div style="background:var(--card);padding:12px;text-align:center">
-          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-family:var(--mono)">PROFIT FACTOR</div>
-          <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--red)">0.28</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px">needs &gt;1.0</div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border)">
-        <div style="background:var(--card);padding:12px;text-align:center">
-          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-family:var(--mono)">AVG WIN</div>
-          <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--green)">+763</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px">Rs.</div>
-        </div>
-        <div style="background:var(--card);padding:12px;text-align:center">
-          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-family:var(--mono)">AVG LOSS</div>
-          <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--red)">-2,552</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px">Rs. (3.3x wins)</div>
-        </div>
-        <div style="background:var(--card);padding:12px;text-align:center">
-          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-family:var(--mono)">EXPIRED LOSS</div>
-          <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--red)">-1,13,148</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px">27 trades</div>
-        </div>
-      </div>
-      <!-- Key insight bar -->
-      <div style="padding:10px 14px;border-top:1px solid var(--border);background:rgba(16,185,129,0.05)">
-        <div style="font-size:11px;color:var(--green);line-height:1.5">
-          <span style="font-weight:700">Key finding:</span> Trades exited within 60 min = Rs.+20,893 profit at 68% WR. Expired options = Rs.-1,13,148 loss. Fix exits, fix everything.
-        </div>
-      </div>
+      <div id="hist-stats-card"></div>
     </div>
 
     <div class="section-label" style="padding-top:4px">CURRENT JOURNAL STATS</div>
@@ -380,6 +343,9 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
       <button onclick="showScreen('playbook')" style="flex:1;background:var(--card);border:1px solid rgba(245,158,11,0.4);color:var(--amber);font-family:var(--mono);font-size:11px;letter-spacing:1px;padding:12px;border-radius:10px;cursor:pointer">
         [=] PLAYBOOK
       </button>
+      <button onclick="openEveningReview(null)" style="flex:1;background:var(--card);border:1px solid rgba(245,158,11,0.4);color:var(--amber);font-family:var(--mono);font-size:11px;letter-spacing:1px;padding:12px;border-radius:10px;cursor:pointer">
+        [*] EVENING REVIEW
+      </button>
     </div>
     <div class="section-label" style="padding-top:4px">CLOUD SYNC</div>
     <div class="cloud-card">
@@ -427,13 +393,11 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
         <input type="file" accept=".csv" onchange="importZerodhaCSV(this)" style="display:none">
       </label>
       <div style="height:1px;background:var(--border);margin:12px 0"></div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6">Or take a screenshot of your Kite Positions/Orders screen and let AI read it automatically.</p>
-      <label style="display:block;width:100%">
-        <div style="width:100%;text-align:center;padding:14px;font-size:15px;cursor:pointer;border-radius:8px;border:1px solid var(--cyan);color:var(--cyan);font-family:var(--sans);font-weight:600">
-          [cam] Import from Screenshot (AI)
-        </div>
-        <input type="file" accept="image/*" onchange="importFromScreenshot(this)" style="display:none">
-      </label>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6">Take a screenshot of your Kite screen, then tap the button below to paste it — AI reads it automatically.</p>
+      <button onclick="importFromClipboard()" style="width:100%;text-align:center;padding:14px;font-size:15px;cursor:pointer;border-radius:8px;border:1px solid var(--cyan);color:var(--cyan);font-family:var(--sans);font-weight:600;background:none">
+        [paste] Import from Clipboard (AI)
+      </button>
+      <p style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5">How to use: take screenshot in Kite app → come back here → tap button above → allow clipboard access → AI imports your trades.</p>
       <div id="import-zerodha-status" style="margin-top:10px"></div>
     </div>
   </div>
@@ -441,6 +405,10 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
 
 <!-- FABs -->
 <div class="fab-group" id="fab-group">
+  <button class="fab" id="fab-session-btn" onclick="openSessionLog()" style="display:none;background:rgba(148,163,184,0.15);color:var(--muted2);border:1px solid var(--border2)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    Session
+  </button>
   <button class="fab fab-ai" id="fab-ai-btn" onclick="openAiExtract()" style="display:none">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
     AI Extract
@@ -479,6 +447,45 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
   </button>
 </nav>
 
+<!-- MODAL: SESSION LOG -->
+<div class="modal-overlay" id="modal-session" style="display:none" onclick="if(event.target===this)closeModal('modal-session')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" style="color:var(--muted2)">SESSION LOG</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5">Record a no-trade day — observations, lessons, or why you chose to stay out.</p>
+    <div class="field"><label>DATE</label><input type="date" id="sl-date"></div>
+    <div class="field"><label>MARKET OBSERVATION</label><textarea id="sl-observation" placeholder="What did you see in the market today? Structure, key levels, bias..." style="min-height:80px"></textarea></div>
+    <div class="field"><label>WHY NO TRADE</label><textarea id="sl-reason" placeholder="Choppy market, no clear setup, waited for confirmation that never came..." style="min-height:70px"></textarea></div>
+    <div class="field"><label>LESSON / MISTAKE</label><textarea id="sl-lesson" placeholder="What would you do differently? What did you learn?" style="min-height:70px"></textarea></div>
+    <div class="field">
+      <label>MARKET CONDITION</label>
+      <div class="chip-group">
+        <div class="mkt-chip" onclick="toggleMkt(this)">Trending Up</div>
+        <div class="mkt-chip" onclick="toggleMkt(this)">Trending Down</div>
+        <div class="mkt-chip" onclick="toggleMkt(this)">Range Bound</div>
+        <div class="mkt-chip" onclick="toggleMkt(this)">High Volatility</div>
+        <div class="mkt-chip" onclick="toggleMkt(this)">Low Volatility</div>
+        <div class="mkt-chip" onclick="toggleMkt(this)">News Driven</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>EMOTIONAL STATE</label>
+      <div class="chip-group">
+        <div class="emo-chip" onclick="toggleEmo(this)">Calm</div>
+        <div class="emo-chip" onclick="toggleEmo(this)">Patient</div>
+        <div class="emo-chip" onclick="toggleEmo(this)">FOMO</div>
+        <div class="emo-chip" onclick="toggleEmo(this)">Anxious</div>
+        <div class="emo-chip" onclick="toggleEmo(this)">Confident</div>
+        <div class="emo-chip" onclick="toggleEmo(this)">Frustrated</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modal-session')">Cancel</button>
+      <button class="btn-save" style="background:var(--muted);color:#000" onclick="saveSessionLog()">Save Session</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: NEW TRADE -->
 <div class="modal-overlay" id="modal-newtrade" style="display:none" onclick="if(event.target===this)closeModal('modal-newtrade')">
   <div class="modal">
@@ -495,6 +502,54 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('modal-newtrade')">Cancel</button>
       <button class="btn-save" onclick="saveTrade()">Start</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: EVENING REVIEW -->
+<div class="modal-overlay" id="modal-evening" style="display:none" onclick="if(event.target===this&&!erSaving)closeModal('modal-evening')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" style="color:var(--amber)">EVENING REVIEW</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5">End of day reflection — what you missed, what you learned, what governs tomorrow.</p>
+    <div class="field"><label>DATE</label><input type="date" id="er-date"></div>
+    <div class="field">
+      <label>LINKED TRADE (optional)</label>
+      <select id="er-trade">
+        <option value="">— Standalone review —</option>
+      </select>
+    </div>
+    <div class="field"><label>WHAT I OBSERVED TODAY</label><textarea id="er-observed" placeholder="Key market structure, levels, price action that stood out..." style="min-height:75px"></textarea></div>
+    <div class="field"><label>WHAT I MISSED AND WHY</label><textarea id="er-missed" placeholder="Setups I saw but didn't act on. Signals I ignored. What stopped me..." style="min-height:75px"></textarea></div>
+    <div class="field"><label>KEY LESSON FOR FUTURE</label><textarea id="er-lesson" placeholder="The one thing I will remember from today that will govern future observations..." style="min-height:75px"></textarea></div>
+    <div class="field"><label>MISTAKES MADE</label><textarea id="er-mistakes" placeholder="Entries too early, averaged down, held too long, broke my rules..." style="min-height:65px"></textarea></div>
+    <div class="field"><label>FREE FORM NOTES</label><textarea id="er-notes" placeholder="Anything else worth recording from today..." style="min-height:65px"></textarea></div>
+    <div class="field">
+      <label>OVERALL DAY GRADE</label>
+      <div class="grade-btns" id="er-grade-btns">
+        <button class="grade-btn" onclick="setErGrade('A')">A</button>
+        <button class="grade-btn" onclick="setErGrade('B')">B</button>
+        <button class="grade-btn" onclick="setErGrade('C')">C</button>
+        <button class="grade-btn" onclick="setErGrade('D')">D</button>
+        <button class="grade-btn" onclick="setErGrade('F')">F</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>EMOTIONAL STATE TODAY</label>
+      <div class="chip-group">
+        <div class="emo-chip" onclick="toggleEmo(this)">Calm</div>
+        <div class="emo-chip" onclick="toggleEmo(this)">Patient</div>
+        <div class="emo-chip" onclick="toggleEmo(this)">FOMO</div>
+        <div class="emo-chip" onclick="toggleEmo(this)">Anxious</div>
+        <div class="emo-chip" onclick="toggleEmo(this)">Confident</div>
+        <div class="emo-chip" onclick="toggleEmo(this)">Frustrated</div>
+        <div class="emo-chip" onclick="toggleEmo(this)">Greedy</div>
+        <div class="emo-chip" onclick="toggleEmo(this)">Disciplined</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modal-evening')">Cancel</button>
+      <button class="btn-save-amber" onclick="saveEveningReview()">Save Review</button>
     </div>
   </div>
 </div>
@@ -623,7 +678,7 @@ textarea.import-box,textarea.export-box{width:100%;background:var(--bg);border:1
 
 <script>
 // ============ DATA ============
-let trades = [], principles = [];
+let trades = [], principles = [], sessions = [];
 let currentFilter = 'ALL', pbFilter = 'ALL';
 let selectedTradeId = null, currentPhase = null, editingPhase = false;
 let specDir = 'BUY', specOutcome = 'NONE', specGrade = '';
@@ -647,13 +702,15 @@ const PHASE_DESC = {
 function load(){
   try{ trades=JSON.parse(localStorage.getItem('tj_trades')||'[]'); }catch(e){ trades=[]; }
   try{ principles=JSON.parse(localStorage.getItem('tj_principles')||'[]'); }catch(e){ principles=[]; }
+  try{ sessions=JSON.parse(localStorage.getItem('tj_sessions')||'[]'); }catch(e){ sessions=[]; }
 }
 function save(){
   localStorage.setItem('tj_trades',JSON.stringify(trades));
   localStorage.setItem('tj_principles',JSON.stringify(principles));
+  localStorage.setItem('tj_sessions',JSON.stringify(sessions));
   localStorage.setItem('tj_lastsync',Date.now().toString());
   // Keep a rolling auto-backup in localStorage as safety net
-  localStorage.setItem('tj_autobackup',JSON.stringify({trades,principles,savedAt:Date.now()}));
+  localStorage.setItem('tj_autobackup',JSON.stringify({trades,principles,sessions,savedAt:Date.now()}));
   updateLastSync();
   showSaveIndicator();
 }
@@ -669,7 +726,7 @@ function showSaveIndicator(){
 // Periodic backup to localStorage every 5 minutes
 setInterval(function(){
   if(trades.length>0){
-    localStorage.setItem('tj_autobackup',JSON.stringify({trades,principles,savedAt:Date.now()}));
+    localStorage.setItem('tj_autobackup',JSON.stringify({trades,principles,sessions,savedAt:Date.now()}));
   }
 },5*60*1000);
 
@@ -697,9 +754,11 @@ function showScreen(name){
   // FAB visibility
   const fabMain = document.getElementById('fab-main-btn');
   const fabAi = document.getElementById('fab-ai-btn');
-  if(name==='journal'){ fabMain.style.display='flex'; fabAi.style.display='flex'; fabMain.style.background='var(--green)'; }
-  else if(name==='playbook'){ fabMain.style.display='flex'; fabAi.style.display='none'; fabMain.style.background='var(--amber)'; }
-  else { fabMain.style.display='none'; fabAi.style.display='none'; }
+  const fabSession=document.getElementById('fab-session-btn');
+  if(name==='journal'){ fabMain.style.display='flex'; fabAi.style.display='flex'; fabSession.style.display='flex'; fabMain.style.background='var(--green)'; }
+  else if(name==='playbook'){ fabMain.style.display='flex'; fabAi.style.display='none'; fabSession.style.display='none'; fabMain.style.background='var(--amber)'; }
+  else { fabMain.style.display='none'; fabAi.style.display='none'; fabSession.style.display='none'; }
+
   currentScreen=name;
   if(name==='analytics') renderAnalytics();
   if(name==='insights') initInsightsScreen();
@@ -717,11 +776,32 @@ function fabMainClick(){
 function renderTradeList(){
   const list = document.getElementById('trade-list');
   let filtered = currentFilter==='ALL' ? trades : trades.filter(t=>t.status===currentFilter);
-  if(!filtered.length){
-    list.innerHTML=`<div class="empty-state"><div class="empty-icon"></div><div class="empty-title">No logs found.</div><div class="empty-sub">Tap + to start a new trade or AI Extract to parse a reflection.</div></div>`;
+  if(!filteredItems.length){
+    list.innerHTML=`<div class="empty-state"><div class="empty-icon"></div><div class="empty-title">No logs found.</div><div class="empty-sub">Tap + to begin logging your next trade. Every log brings you closer to the One Big Trade.</div></div>`;
     return;
   }
-  list.innerHTML=filtered.map(t=>{
+  list.innerHTML=filteredItems.map(item=>{
+    if(item._type==='session'){
+      const date=new Date(item.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+      const isEvening=item._reviewType==='evening';
+      const label=isEvening?'EVENING REVIEW':'NO TRADE DAY';
+      const borderColor=isEvening?'rgba(245,158,11,0.3)':'rgba(148,163,184,0.2)';
+      const labelColor=isEvening?'var(--amber)':'var(--muted2)';
+      const preview=isEvening?(item.observed||item.lesson||item.notes||''):(item.observation||'');
+      const lessonText=item.lesson||'';
+      return '<div class="trade-card" style="border-color:'+borderColor+'">'+
+        '<div class="trade-card-header">'+
+        '<div><div style="display:flex;align-items:center;gap:8px">'+
+        '<span style="font-family:var(--mono);font-size:13px;color:'+labelColor+'">'+label+'</span>'+
+        (item.grade?'<span style="font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:4px;background:var(--green-dim);color:var(--green)">Grade: '+item.grade+'</span>':'')+
+        '</div>'+
+        '<div class="trade-date">'+date+(item.marketCondition?' · '+item.marketCondition:'')+'</div></div>'+
+        '<button class="delete-btn" onclick="event.stopPropagation();deleteSession('+item.id+')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2v2"/></svg></button></div>'+
+        (preview?'<div style="font-size:12px;color:var(--muted2);margin-top:8px;line-height:1.5">'+preview.slice(0,120)+(preview.length>120?'...':'')+'</div>':'')+
+        (lessonText?'<div style="font-size:11px;color:var(--amber);margin-top:5px;font-style:italic">Lesson: '+lessonText.slice(0,90)+'</div>':'')+
+        '</div>';
+    }
+    const t=item;
     const date=new Date(t.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
     const dots=PHASES.map(p=>`<div class="phase-dot ${(t.logs||[]).some(l=>l.phase===p)?'done':''}"></div>`).join('');
     const logCount=(t.logs||[]).length;
@@ -843,6 +923,7 @@ function savePhaseLog(){
   if(activeP.includes(currentPhase)&&trade.status==='PLANNING') trade.status='ACTIVE';
   if(closedP.includes(currentPhase)&&trade.status==='ACTIVE') trade.status='CLOSED';
   trade.updatedAt=Date.now();
+  const syncTrade=trades.find(t=>t.id===selectedTradeId); if(syncTrade) syncPhaseToSpecs(syncTrade);
   save(); closeModal('modal-phase'); renderTimeline(); updateSpecsSummary();
   // Try AI extraction silently in background
   const updatedTrade=trades.find(t=>t.id===selectedTradeId);
@@ -898,6 +979,7 @@ function saveSpecs(){
   // Auto-close if exit price set
   if(t.exitPrice>0&&t.status!=='CLOSED') t.status='CLOSED';
   t.updatedAt=Date.now();
+  syncSpecsToPhase(t);
   save(); closeModal('modal-specs'); renderTimeline(); updateSpecsSummary();
   // Toast notification
   if(t.pnl!==0){
@@ -977,6 +1059,7 @@ async function tryAiExtractFromNotes(trade){
 
 // ============ ANALYTICS ============
 function renderAnalytics(){
+  renderHistoricalStatsCard();
   const allTrades=trades; const closed=trades.filter(t=>t.status==='CLOSED'&&t.winLoss!=='NONE');
   const wins=closed.filter(t=>t.winLoss==='WIN');
   const losses=closed.filter(t=>t.winLoss==='LOSS');
@@ -1036,7 +1119,7 @@ function renderPlaybook(){
   const list=document.getElementById('playbook-list');
   let filtered=pbFilter==='ALL'?principles:principles.filter(p=>p.category===pbFilter);
   if(!filtered.length){
-    list.innerHTML=`<div class="empty-state"><div class="empty-icon"></div><div class="empty-title">No principles yet.</div><div class="empty-sub">Tap + to add a trading principle, rule, or lesson learned.</div></div>`;
+    list.innerHTML=`<div class="empty-state"><div class="empty-icon"></div><div class="empty-title">No principles yet.</div><div class="empty-sub">Tap + to record a principle. These are the building blocks of your One Big Trade.</div></div>`;
     return;
   }
   list.innerHTML=filtered.map(p=>{
@@ -1101,7 +1184,7 @@ function syncNow(){
   d.style.background='var(--cyan)'; setTimeout(()=>d.style.background='var(--green)',1000);
 }
 function downloadBackup(){
-  const data=JSON.stringify({trades,principles},null,2);
+  const data=JSON.stringify({trades,principles,sessions},null,2);
   const blob=new Blob([data],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
@@ -1245,31 +1328,41 @@ function importZerodhaCSV(input){
 }
 
 // ============ SCREENSHOT IMPORT (AI) ============
-async function importFromScreenshot(input){
-  const file=input.files[0]; if(!file) return;
+async function importFromClipboard(){
   const statusEl=document.getElementById('import-zerodha-status');
-  statusEl.innerHTML="<div class='status-box' style='background:var(--cyan-dim);color:var(--cyan);border:1px solid var(--cyan)'>Reading image...</div>";
+  statusEl.innerHTML="<div class='status-box' style='background:var(--cyan-dim);color:var(--cyan);border:1px solid var(--cyan)'>Reading clipboard...</div>";
   try{
-    // Read as ArrayBuffer then convert to base64 - bypasses canvas taint on iOS
-    const base64 = await new Promise((res,rej)=>{
-      const reader = new FileReader();
-      reader.onload = function(){
-        try{
-          const arr = new Uint8Array(reader.result);
-          let binary = '';
-          const chunkSize = 8192;
-          for(let i=0; i<arr.length; i+=chunkSize){
-            binary += String.fromCharCode.apply(null, arr.subarray(i, i+chunkSize));
-          }
-          res(btoa(binary));
-        }catch(e){ rej(e); }
-      };
-      reader.onerror = function(){ rej(new Error('FileReader error: '+reader.error)); };
-      reader.readAsArrayBuffer(file);
-    });
-    const mimeType = file.type && file.type.startsWith('image/') ? file.type : 'image/jpeg';
+    // Check clipboard API availability
+    if(!navigator.clipboard||!navigator.clipboard.read){
+      throw new Error('Clipboard API not available. Try opening the app in Safari browser instead of home screen, or use the CSV import instead.');
+    }
+    const clipItems = await navigator.clipboard.read();
+    let base64 = null;
+    let mimeType = 'image/jpeg';
+    for(const item of clipItems){
+      const imageType = item.types.find(t=>t.startsWith('image/'));
+      if(imageType){
+        const blob = await item.getType(imageType);
+        mimeType = imageType;
+        base64 = await new Promise((res,rej)=>{
+          const reader = new FileReader();
+          reader.onload = function(){
+            const arr = new Uint8Array(reader.result);
+            let binary = '';
+            for(let i=0;i<arr.length;i+=8192){
+              binary += String.fromCharCode.apply(null, arr.subarray(i,i+8192));
+            }
+            res(btoa(binary));
+          };
+          reader.onerror = function(){ rej(new Error('Could not read clipboard image')); };
+          reader.readAsArrayBuffer(blob);
+        });
+        break;
+      }
+    }
+    if(!base64) throw new Error('No image found in clipboard. Please take a screenshot first, then tap this button.');
     statusEl.innerHTML="<div class='status-box' style='background:var(--cyan-dim);color:var(--cyan);border:1px solid var(--cyan)'>AI is reading your screenshot...</div>";
-    const prompt="This is a Zerodha Kite screenshot showing positions or orders. Extract all visible trades. Return ONLY a JSON array, no markdown. Each item must have: symbol (string), direction (BUY or SELL), entryPrice (number, use avg price if shown), exitPrice (number or 0), quantity (number), pnl (number or 0), entryTime (string or empty), exitTime (string or empty). For options: CE=BUY, PE=SELL. For equity/EQ: BUY if holding. Use 0 for missing values.";
+    const prompt="This is a Zerodha Kite screenshot showing positions or orders. Extract all visible trades. Return ONLY a JSON array, no markdown. Each item: {symbol,direction(BUY/SELL),entryPrice,exitPrice,quantity,pnl,entryTime,exitTime}. CE=BUY, PE=SELL, EQ=BUY. Use 0 for missing values.";
     const response = await fetch("https://api.anthropic.com/v1/messages",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
@@ -1287,20 +1380,20 @@ async function importFromScreenshot(input){
     if(data.error) throw new Error(data.error.message||'API error');
     const text = data.content?.map(c=>c.text||"").join("")||"";
     const result = JSON.parse(text.replace(/```json|```/g,"").trim());
-    if(!Array.isArray(result)) throw new Error('Unexpected response format');
+    if(!Array.isArray(result)) throw new Error('Unexpected response');
     let added=0, skipped=0;
     const today=new Date().toISOString().slice(0,10);
     result.forEach(item=>{
       if(!item.symbol) return;
       if(trades.find(t=>t.symbol===item.symbol&&new Date(t.createdAt).toISOString().slice(0,10)===today)){skipped++;return;}
-      const ep=item.entryPrice||0, xp=item.exitPrice||0, qty=item.quantity||0;
+      const ep=item.entryPrice||0,xp=item.exitPrice||0,qty=item.quantity||0;
       let pnl=item.pnl||0;
       if(!pnl&&ep>0&&xp>0&&qty>0) pnl=Math.round((xp-ep)*qty*100)/100;
       const wl=pnl>0?"WIN":pnl<0?"LOSS":xp>0?"BREAKEVEN":"NONE";
       const status=xp>0?"CLOSED":pnl!==0?"ACTIVE":"PLANNING";
       const now=Date.now();
       const logs=[{phase:"EXECUTE",notes:"Entry: "+item.symbol+" @ Rs."+ep+" x "+qty+" qty"+(item.entryTime?" at "+item.entryTime:""),emotionalState:"",marketCondition:"",extractedKeywords:"screenshot-import",timestamp:now}];
-      if(xp>0||pnl!==0) logs.push({phase:"EXIT",notes:(xp>0?"Exit @ Rs."+xp+" x "+qty+" qty"+(item.exitTime?" at "+item.exitTime:""):"Position open")+" | P&L: Rs."+(pnl>=0?"+":"")+pnl,emotionalState:"",marketCondition:"",extractedKeywords:"screenshot-import",timestamp:now});
+      if(xp>0||pnl!==0) logs.push({phase:"EXIT",notes:(xp>0?"Exit @ Rs."+xp+" x "+qty:"Position open")+" | P&L: Rs."+(pnl>=0?"+":"")+pnl,emotionalState:"",marketCondition:"",extractedKeywords:"screenshot-import",timestamp:now});
       trades.unshift({id:genId()+Math.floor(Math.random()*999),symbol:item.symbol,direction:item.direction||"BUY",status,entryPrice:ep,exitPrice:xp,stopLoss:0,takeProfit:0,quantity:qty,pnl,winLoss:wl,grade:"",createdAt:now,updatedAt:now,logs});
       added++;
     });
@@ -1308,10 +1401,15 @@ async function importFromScreenshot(input){
     save(); renderTradeList();
     statusEl.innerHTML="<div class='status-box status-ok'>[OK] Imported "+added+" trade(s). "+skipped+" duplicate(s) skipped.</div>";
   }catch(err){
-    statusEl.innerHTML="<div class='status-box status-err'>Error: "+err.message+"</div>";
+    let msg=err.message||'Unknown error';
+    if(msg.includes('clipboard')||msg.includes('Clipboard')){
+      msg=msg+' — Alternative: use the CSV import from Zerodha Console instead.';
+    }
+    statusEl.innerHTML="<div class='status-box status-err'>"+msg+"</div>";
   }
-  input.value="";
 }
+
+async function importFromScreenshot(input){ statusEl.innerHTML="Deprecated"; }
 
 // ============ INSIGHTS ============
 function renderHistoricalInsights(){
@@ -1470,6 +1568,302 @@ function checkWeeklySummary(){
     document.body.appendChild(toast);
     setTimeout(()=>{if(toast.parentNode)toast.remove();},8000);
   }
+}
+
+// ============ SESSION LOG ============
+function openSessionLog(){
+  document.getElementById('sl-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('sl-observation').value='';
+  document.getElementById('sl-reason').value='';
+  document.getElementById('sl-lesson').value='';
+  document.querySelectorAll('.emo-chip').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.mkt-chip').forEach(c=>c.classList.remove('active'));
+  openModal('modal-session');
+  setTimeout(()=>document.getElementById('sl-observation').focus(),300);
+}
+
+function saveSessionLog(){
+  const observation=document.getElementById('sl-observation').value.trim();
+  const reason=document.getElementById('sl-reason').value.trim();
+  const lesson=document.getElementById('sl-lesson').value.trim();
+  const date=document.getElementById('sl-date').value;
+  if(!observation&&!lesson) return;
+  const emo=Array.from(document.querySelectorAll('.emo-chip.active')).map(c=>c.textContent).join(', ');
+  const mkt=Array.from(document.querySelectorAll('.mkt-chip.active')).map(c=>c.textContent).join(', ');
+  sessions.unshift({
+    id:genId(),
+    date,observation,reason,lesson,
+    emotionalState:emo,marketCondition:mkt,
+    createdAt:new Date(date).getTime()||Date.now(),
+    updatedAt:Date.now()
+  });
+  save(); closeModal('modal-session'); renderTradeList();
+}
+
+function deleteSession(id){
+  if(!confirm('Delete this session log?')) return;
+  sessions=sessions.filter(s=>s.id!==id);
+  save(); renderTradeList();
+}
+
+// ============ HISTORICAL STATS FROM CSV ============
+function calculateAndStoreHistoricalStats(rows){
+  // Group by symbol+date
+  const bySymDate={};
+  rows.forEach(r=>{
+    const sym=r['symbol']||''; const date=r['trade_date']||'';
+    if(!sym||!date) return;
+    const key=sym+'|'+date;
+    if(!bySymDate[key]) bySymDate[key]=[];
+    bySymDate[key].push(r);
+  });
+  const histTrades=[];
+  Object.entries(bySymDate).forEach(([key,orders])=>{
+    const parts=key.split('|'); const symbol=parts[0]; const tradeDate=parts[1];
+    const buys=orders.filter(o=>o['trade_type']==='buy');
+    const sells=orders.filter(o=>o['trade_type']==='sell');
+    const totalBuyQty=buys.reduce((s,o)=>s+parseFloat(o['quantity']||0),0);
+    const totalSellQty=sells.reduce((s,o)=>s+parseFloat(o['quantity']||0),0);
+    if(totalBuyQty===0) return;
+    const avgEntry=buys.reduce((s,o)=>s+parseFloat(o['price']||0)*parseFloat(o['quantity']||0),0)/totalBuyQty;
+    const avgExit=totalSellQty>0?sells.reduce((s,o)=>s+parseFloat(o['price']||0)*parseFloat(o['quantity']||0),0)/totalSellQty:0;
+    const soldPnl=totalSellQty>0?(avgExit-avgEntry)*totalSellQty:0;
+    const expiredQty=totalBuyQty-totalSellQty;
+    const expiredPnl=expiredQty>0?(0-avgEntry)*expiredQty:0;
+    const pnl=Math.round((soldPnl+expiredPnl)*100)/100;
+    const winLoss=pnl>0?'WIN':pnl<0?'LOSS':'BREAKEVEN';
+    const entryTime=buys[0]?buys[0]['order_execution_time']||'':'';
+    const entryMins=entryTime?parseInt(entryTime.slice(11,13))*60+parseInt(entryTime.slice(14,16)):0;
+    const exitTime=sells.length?sells[sells.length-1]['order_execution_time']||'':'';
+    const holdMins=entryTime&&exitTime?Math.round((new Date(exitTime)-new Date(entryTime))/60000):-1;
+    histTrades.push({symbol,date:tradeDate,pnl,winLoss,entryMins,holdMins,numBuys:buys.length,expiredQty,totalSellQty});
+  });
+  if(histTrades.length===0) return null;
+  const wins=histTrades.filter(t=>t.winLoss==='WIN');
+  const losses=histTrades.filter(t=>t.winLoss==='LOSS');
+  const totalPnl=histTrades.reduce((s,t)=>s+t.pnl,0);
+  const winPnls=wins.map(t=>t.pnl);
+  const lossPnls=losses.map(t=>t.pnl);
+  const avgWin=winPnls.length?Math.round(winPnls.reduce((a,b)=>a+b,0)/winPnls.length):0;
+  const avgLoss=lossPnls.length?Math.round(lossPnls.reduce((a,b)=>a+b,0)/lossPnls.length):0;
+  const pf=lossPnls.length&&Math.abs(lossPnls.reduce((a,b)=>a+b,0))>0?Math.round((winPnls.reduce((a,b)=>a+b,0)/Math.abs(lossPnls.reduce((a,b)=>a+b,0)))*100)/100:0;
+  const expiredTrades=histTrades.filter(t=>t.expiredQty>0);
+  const expiredLoss=Math.round(expiredTrades.reduce((s,t)=>s+((0-t.pnl<0?t.pnl:0)),0));
+  const shortTrades=histTrades.filter(t=>t.holdMins>=0&&t.holdMins<=60);
+  const shortWins=shortTrades.filter(t=>t.winLoss==='WIN');
+  const shortPnl=Math.round(shortTrades.reduce((s,t)=>s+t.pnl,0));
+  const avgDownTrades=histTrades.filter(t=>t.numBuys>1);
+  const stats={
+    total:histTrades.length,
+    wins:wins.length,losses:losses.length,
+    wr:Math.round(wins.length/histTrades.length*1000)/10,
+    totalPnl:Math.round(totalPnl),avgWin,avgLoss,pf,
+    expiredCount:expiredTrades.length,
+    expiredLoss:Math.round(expiredTrades.reduce((s,t)=>s+(t.pnl<0?t.pnl:-(t.numBuys>1?0:0)),0)),
+    shortTradesWr:shortTrades.length?Math.round(shortWins.length/shortTrades.length*100):0,
+    shortTradesPnl:shortPnl,
+    avgDownCount:avgDownTrades.length,
+    dateRange:histTrades[0]?histTrades[0].date+' to '+histTrades[histTrades.length-1].date:''
+  };
+  // Recalculate expired loss properly
+  const fullyExpired=histTrades.filter(t=>t.expiredQty>0&&t.totalSellQty===0);
+  stats.expiredLoss=Math.round(fullyExpired.reduce((s,t)=>s+t.pnl,0)+histTrades.filter(t=>t.expiredQty>0&&t.totalSellQty>0).reduce((s,t)=>s+Math.min(0,t.pnl),0));
+  localStorage.setItem('tj_histStats',JSON.stringify(stats));
+  return stats;
+}
+
+function renderHistoricalStatsCard(){
+  const el=document.getElementById('hist-stats-card');
+  if(!el) return;
+  let stats=null;
+  try{ stats=JSON.parse(localStorage.getItem('tj_histStats')||'null'); }catch(e){}
+  if(!stats){
+    el.innerHTML='<div style="text-align:center;padding:20px;font-size:12px;color:var(--muted)">No historical data yet. Import your Zerodha tradebook CSV in the More tab to see your personal baseline stats.</div>';
+    return;
+  }
+  const pnlColor=stats.totalPnl>=0?'var(--green)':'var(--red)';
+  const pnlFmt=(stats.totalPnl>=0?'+Rs.':'-Rs.')+Math.abs(stats.totalPnl).toLocaleString('en-IN');
+  el.innerHTML=
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border)">'+
+    '<div style="background:var(--card);padding:10px;text-align:center"><div style="font-size:9px;color:var(--muted);font-family:var(--mono);margin-bottom:3px">WIN RATE</div><div style="font-family:var(--mono);font-size:17px;font-weight:700;color:var(--amber)">'+stats.wr+'%</div><div style="font-size:10px;color:var(--muted)">'+stats.wins+'W-'+stats.losses+'L</div></div>'+
+    '<div style="background:var(--card);padding:10px;text-align:center"><div style="font-size:9px;color:var(--muted);font-family:var(--mono);margin-bottom:3px">NET PnL</div><div style="font-family:var(--mono);font-size:17px;font-weight:700;color:'+pnlColor+'">'+pnlFmt+'</div><div style="font-size:10px;color:var(--muted)">'+stats.total+' trades</div></div>'+
+    '<div style="background:var(--card);padding:10px;text-align:center"><div style="font-size:9px;color:var(--muted);font-family:var(--mono);margin-bottom:3px">PROFIT FACTOR</div><div style="font-family:var(--mono);font-size:17px;font-weight:700;color:'+(stats.pf>=1?'var(--green)':'var(--red)')+'">'+stats.pf+'</div><div style="font-size:10px;color:var(--muted)">need &gt;1.0</div></div>'+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border)">'+
+    '<div style="background:var(--card);padding:10px;text-align:center"><div style="font-size:9px;color:var(--muted);font-family:var(--mono);margin-bottom:3px">AVG WIN</div><div style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--green)">+'+stats.avgWin.toLocaleString('en-IN')+'</div></div>'+
+    '<div style="background:var(--card);padding:10px;text-align:center"><div style="font-size:9px;color:var(--muted);font-family:var(--mono);margin-bottom:3px">AVG LOSS</div><div style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--red)">'+stats.avgLoss.toLocaleString('en-IN')+'</div></div>'+
+    '<div style="background:var(--card);padding:10px;text-align:center"><div style="font-size:9px;color:var(--muted);font-family:var(--mono);margin-bottom:3px">EXPIRED</div><div style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--red)">'+stats.expiredCount+' trades</div></div>'+
+    '</div>'+
+    '<div style="padding:10px 14px;border-top:1px solid var(--border);background:rgba(16,185,129,0.05)">'+
+    '<div style="font-size:11px;color:var(--green);line-height:1.5">Trades exited within 60 min: '+stats.shortTradesWr+'% WR, Rs.'+stats.shortTradesPnl.toLocaleString('en-IN')+' PnL &nbsp;|&nbsp; Averaging down: '+stats.avgDownCount+' trades</div>'+
+    '<div style="font-size:10px;color:var(--muted);margin-top:3px">'+stats.dateRange+'</div>'+
+    '</div>';
+}
+
+// ============ IMPROVED AI EXTRACT (handles Kite text) ============
+function openAiExtract(){
+  document.getElementById('ai-paragraph').value='';
+  document.getElementById('ai-status-box').innerHTML='';
+  aiRunning=false;
+  openModal('modal-ai');
+  setTimeout(()=>document.getElementById('ai-paragraph').focus(),300);
+}
+
+// ============ TWO-WAY SPECS <-> JOURNAL ============
+function syncSpecsToPhase(trade){
+  // When specs are saved, update EXECUTE phase notes with entry details
+  if(!trade.logs) return;
+  const execIdx=trade.logs.findIndex(l=>l.phase==='EXECUTE');
+  if(execIdx>=0&&trade.entryPrice>0){
+    const existing=trade.logs[execIdx];
+    // Only update if it was auto-generated or empty
+    if(existing.extractedKeywords==='zerodha-import'||existing.extractedKeywords==='screenshot-import'||existing.notes.length<5){
+      trade.logs[execIdx].notes='Entry: '+trade.symbol+' @ Rs.'+trade.entryPrice+' x '+trade.quantity+' qty ('+trade.direction+')';
+    }
+  }
+  const exitIdx=trade.logs.findIndex(l=>l.phase==='EXIT');
+  if(trade.exitPrice>0){
+    const exitNote='Exit: '+trade.symbol+' @ Rs.'+trade.exitPrice+' | P&L: Rs.'+(trade.pnl>=0?'+':'')+trade.pnl+' ('+trade.winLoss+')';
+    if(exitIdx>=0){
+      if(trade.logs[exitIdx].extractedKeywords==='zerodha-import'||trade.logs[exitIdx].extractedKeywords==='screenshot-import'){
+        trade.logs[exitIdx].notes=exitNote;
+      }
+    } else {
+      trade.logs.push({phase:'EXIT',notes:exitNote,emotionalState:'',marketCondition:'',extractedKeywords:'specs-sync',timestamp:Date.now()});
+    }
+  }
+}
+
+function syncPhaseToSpecs(trade){
+  // When phase notes saved, try to extract prices into specs
+  if(!trade.logs) return;
+  const execLog=trade.logs.find(l=>l.phase==='EXECUTE');
+  const exitLog=trade.logs.find(l=>l.phase==='EXIT');
+  // Extract numbers from notes
+  function extractPrice(text){
+    if(!text) return 0;
+    const matches=text.match(/Rs\.?\s*(\d+\.?\d*)|@\s*(\d+\.?\d*)|at\s+(\d+\.?\d*)/i);
+    if(matches) return parseFloat(matches[1]||matches[2]||matches[3])||0;
+    return 0;
+  }
+  function extractQty(text){
+    if(!text) return 0;
+    const matches=text.match(/x\s*(\d+)|qty[:\s]+(\d+)|(\d+)\s*qty/i);
+    if(matches) return parseFloat(matches[1]||matches[2]||matches[3])||0;
+    return 0;
+  }
+  if(execLog&&trade.entryPrice===0){
+    const ep=extractPrice(execLog.notes);
+    if(ep>0) trade.entryPrice=ep;
+  }
+  if(execLog&&trade.quantity===0){
+    const qty=extractQty(execLog.notes);
+    if(qty>0) trade.quantity=qty;
+  }
+  if(exitLog&&trade.exitPrice===0){
+    const xp=extractPrice(exitLog.notes);
+    if(xp>0){
+      trade.exitPrice=xp;
+      if(trade.entryPrice>0&&trade.quantity>0){
+        const m=trade.direction==='BUY'?1:-1;
+        trade.pnl=Math.round((xp-trade.entryPrice)*trade.quantity*m*100)/100;
+        trade.winLoss=trade.pnl>0?'WIN':trade.pnl<0?'LOSS':'BREAKEVEN';
+        trade.status='CLOSED';
+      }
+    }
+  }
+}
+
+// ============ EVENING REVIEW ============
+let erGrade = '';
+let erSaving = false;
+
+function openEveningReview(tradeId){
+  erGrade = '';
+  document.getElementById('er-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('er-observed').value = '';
+  document.getElementById('er-missed').value = '';
+  document.getElementById('er-lesson').value = '';
+  document.getElementById('er-mistakes').value = '';
+  document.getElementById('er-notes').value = '';
+  document.querySelectorAll('.emo-chip').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('#er-grade-btns .grade-btn').forEach(b=>b.classList.remove('active'));
+  // Populate trade dropdown
+  const sel = document.getElementById('er-trade');
+  sel.innerHTML = '<option value="">— Standalone review —</option>';
+  trades.forEach(t=>{
+    const opt = document.createElement('option');
+    opt.value = t.id;
+    opt.textContent = t.symbol + ' (' + new Date(t.createdAt).toLocaleDateString('en-IN') + ')';
+    if(t.id === tradeId) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  // If linked to trade, pre-fill from REVIEW phase if exists
+  if(tradeId){
+    const trade = trades.find(t=>t.id===tradeId);
+    if(trade){
+      const reviewLog = (trade.logs||[]).find(l=>l.phase==='REVIEW');
+      if(reviewLog) document.getElementById('er-notes').value = reviewLog.notes||'';
+      erGrade = trade.grade||'';
+      setErGrade(erGrade);
+    }
+  }
+  openModal('modal-evening');
+  setTimeout(()=>document.getElementById('er-observed').focus(),300);
+}
+
+function setErGrade(g){
+  erGrade = g;
+  document.querySelectorAll('#er-grade-btns .grade-btn').forEach(b=>{
+    b.classList.toggle('active', b.textContent===g);
+  });
+}
+
+function saveEveningReview(){
+  const observed = document.getElementById('er-observed').value.trim();
+  const missed = document.getElementById('er-missed').value.trim();
+  const lesson = document.getElementById('er-lesson').value.trim();
+  const mistakes = document.getElementById('er-mistakes').value.trim();
+  const notes = document.getElementById('er-notes').value.trim();
+  const date = document.getElementById('er-date').value;
+  const linkedTradeId = parseInt(document.getElementById('er-trade').value)||null;
+  const emo = Array.from(document.querySelectorAll('.emo-chip.active')).map(c=>c.textContent).join(', ');
+  if(!observed&&!lesson&&!notes) return;
+
+  const review = {
+    id:genId(), date, linkedTradeId,
+    observed, missed, lesson, mistakes, notes,
+    emotionalState:emo, grade:erGrade,
+    createdAt:new Date(date).getTime()||Date.now(),
+    updatedAt:Date.now()
+  };
+
+  // Save to sessions as type 'evening'
+  sessions.unshift({...review, _reviewType:'evening'});
+
+  // If linked to a trade, also update the REVIEW phase log
+  if(linkedTradeId){
+    const trade = trades.find(t=>t.id===linkedTradeId);
+    if(trade){
+      if(!trade.logs) trade.logs=[];
+      const existingIdx = trade.logs.findIndex(l=>l.phase==='REVIEW');
+      const reviewNote = [
+        observed?'OBSERVED: '+observed:'',
+        missed?'MISSED: '+missed:'',
+        lesson?'LESSON: '+lesson:'',
+        mistakes?'MISTAKES: '+mistakes:'',
+        notes?'NOTES: '+notes:''
+      ].filter(Boolean).join('\n');
+      const log = {phase:'REVIEW',notes:reviewNote,emotionalState:emo,marketCondition:'',extractedKeywords:'evening-review',timestamp:Date.now()};
+      if(existingIdx>=0) trade.logs[existingIdx]=log; else trade.logs.push(log);
+      if(erGrade) trade.grade=erGrade;
+      trade.status='CLOSED';
+      trade.updatedAt=Date.now();
+    }
+  }
+
+  save(); closeModal('modal-evening'); renderTradeList();
+  if(linkedTradeId && selectedTradeId===linkedTradeId) renderTimeline();
 }
 
 // ============ INIT ============
