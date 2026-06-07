@@ -703,6 +703,9 @@ function load(){
   try{ trades=JSON.parse(localStorage.getItem('tj_trades')||'[]'); }catch(e){ trades=[]; }
   try{ principles=JSON.parse(localStorage.getItem('tj_principles')||'[]'); }catch(e){ principles=[]; }
   try{ sessions=JSON.parse(localStorage.getItem('tj_sessions')||'[]'); }catch(e){ sessions=[]; }
+  if(!Array.isArray(sessions)) sessions=[];
+  if(!Array.isArray(trades)) trades=[];
+  if(!Array.isArray(principles)) principles=[];
 }
 function save(){
   localStorage.setItem('tj_trades',JSON.stringify(trades));
@@ -775,18 +778,21 @@ function fabMainClick(){
 // ============ TRADE LIST ============
 function renderTradeList(){
   const list = document.getElementById('trade-list');
+  if(!list) return;
+  // Ensure arrays exist
+  if(!Array.isArray(sessions)) sessions=[];
+  if(!Array.isArray(trades)) trades=[];
   // Merge trades and session logs sorted by date
-  let allItems=[];
+  const allItems=[];
   if(currentFilter==='ALL'||currentFilter==='SESSION'){
-    (sessions||[]).forEach(s=>allItems.push({...s,_type:'session'}));
+    sessions.forEach(s=>allItems.push(Object.assign({},s,{_type:'session'})));
   }
   if(currentFilter!=='SESSION'){
-    let filtered=currentFilter==='ALL'?trades:trades.filter(t=>t.status===currentFilter);
-    filtered.forEach(t=>allItems.push({...t,_type:'trade'}));
+    const filtered=currentFilter==='ALL'?trades:trades.filter(t=>t.status===currentFilter);
+    filtered.forEach(t=>allItems.push(Object.assign({},t,{_type:'trade'})));
   }
   allItems.sort((a,b)=>b.createdAt-a.createdAt);
   const filteredItems=allItems;
-  const filtered=filteredItems;
   if(!filteredItems.length){
     list.innerHTML=`<div class="empty-state"><div class="empty-icon"></div><div class="empty-title">No logs found.</div><div class="empty-sub">Tap + to begin logging your next trade. Every log brings you closer to the One Big Trade.</div></div>`;
     return;
@@ -1328,8 +1334,9 @@ function importZerodhaCSV(input){
         trades.unshift(newTrade); added++;
       });
       trades.sort((a,b)=>b.createdAt-a.createdAt);
-      save(); renderTradeList();
-      statusEl.innerHTML='<div class="status-box status-ok">[OK] Imported '+added+' trades. '+skipped+' duplicates skipped.</div>';
+      calculateAndStoreHistoricalStats(rows);
+      save(); renderTradeList(); renderHistoricalStatsCard();
+      statusEl.innerHTML='<div class="status-box status-ok">[OK] Imported '+added+' trades. '+skipped+' duplicates skipped. Historical baseline updated.</div>';
     } catch(err){
       statusEl.innerHTML='<div class="status-box status-err">Error: '+err.message+'</div>';
     }
