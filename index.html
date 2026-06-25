@@ -253,6 +253,52 @@ input:checked+.tslider:before{transform:translateX(18px)}
 .empty-title{font-size:14px;color:var(--white);margin-bottom:6px}
 .empty-sub{font-size:12px;color:var(--muted2);line-height:1.6}
 textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:8px;color:var(--white);font-size:12px;font-family:var(--mono);padding:9px;resize:vertical;min-height:70px;margin-top:7px}
+/* ── SESSION MODE ADDITIONS ─────────────────────────────────────────── */
+.yday-card{margin:0 18px 10px;background:var(--card);border-radius:14px;border:1px solid rgba(245,158,11,0.25);overflow:hidden}
+.yday-head{padding:10px 13px;background:var(--adim);display:flex;align-items:center;justify-content:space-between}
+.yday-title{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--amber)}
+.yday-grade{font-family:var(--mono);font-size:13px;font-weight:700}
+.yday-body{padding:10px 13px 12px}
+.yday-lesson{font-size:12px;color:var(--white);line-height:1.6;margin-bottom:7px;border-left:2px solid var(--amber);padding-left:9px;font-style:italic}
+.yday-row{font-size:11px;color:var(--muted2);margin-bottom:4px;line-height:1.5}
+.yday-row b{color:var(--white);font-weight:500}
+.pm-card{margin:0 18px 10px;background:var(--card);border-radius:14px;border:1px solid rgba(6,182,212,0.2);overflow:hidden}
+.pm-head{padding:10px 13px;background:var(--cdim);display:flex;align-items:center;justify-content:space-between}
+.pm-title{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--cyan)}
+.pm-body{padding:10px 13px 12px}
+.pm-bias{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;margin-bottom:7px}
+.pm-bias.bull{background:var(--gdim);color:var(--green);border:1px solid var(--green)}
+.pm-bias.bear{background:var(--rdim);color:var(--red);border:1px solid var(--red)}
+.pm-bias.neut{background:var(--cdim);color:var(--cyan);border:1px solid var(--cyan)}
+.pm-row{font-size:11px;color:var(--muted2);margin-bottom:5px;line-height:1.5}
+.pm-row b{color:var(--white);font-weight:500}
+.pm-level{display:inline-block;font-family:var(--mono);font-size:10px;background:var(--card2);border:1px solid var(--border2);padding:2px 6px;border-radius:4px;margin:2px 3px 2px 0;color:var(--amber)}
+.pm-log-btn{background:var(--cyan);color:#000;border:none;font-size:10px;font-weight:700;padding:5px 11px;border-radius:7px;cursor:pointer;font-family:var(--sans)}
+.bt-bar{margin:0 18px 10px;background:var(--adim);border:1px solid rgba(245,158,11,0.25);border-radius:13px;padding:11px 14px}
+.bt-badge{font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:10px;background:var(--amber);color:#000;font-weight:700;letter-spacing:.05em}
+.bt-sum{margin:0 18px 10px;background:var(--card);border:1px solid var(--border2);border-radius:13px;padding:12px 14px}
+.bt-lh{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--cyan);padding:8px 0 4px;border-top:1px solid var(--border);margin-top:6px;text-transform:uppercase}
+.bt-lh:first-child{border-top:none;margin-top:0;padding-top:0}
+.bt-f{margin-bottom:7px}
+.bt-f label{font-size:10px;color:var(--muted2);margin-bottom:3px;display:block;font-family:var(--mono)}
+.bt-f input,.bt-f select,.bt-f textarea{width:100%;background:var(--card);border:1px solid var(--border2);border-radius:7px;color:var(--white);font-size:13px;font-family:var(--sans);padding:7px 10px;-webkit-appearance:none}
+.bt-f textarea{resize:vertical;min-height:52px;line-height:1.5}
+.bt-dt-row{display:flex;gap:5px;margin-bottom:7px}
+.bt-dt-cell{flex:1;background:var(--card);border:1px solid var(--border2);border-radius:7px;padding:6px;text-align:center}
+.bt-dt-cell label{font-size:8px;color:var(--muted2);display:block;margin-bottom:2px;font-family:var(--mono);letter-spacing:.04em}
+.bt-dt-cell select{background:none;border:none;color:var(--white);font-size:10px;font-family:var(--mono);width:100%;padding:0;-webkit-appearance:none}
+.dtcbtn-row{display:flex;gap:6px;margin-top:4px;margin-bottom:7px}
+.dtcbtn{flex:1;padding:7px 4px;border-radius:7px;font-family:var(--mono);font-size:10px;font-weight:700;border:1px solid var(--border2);background:var(--card2);color:var(--muted2);cursor:pointer;text-align:center;transition:all .15s}
+.dtcbtn.on.y{background:var(--gdim);border-color:var(--green);color:var(--green)}
+.dtcbtn.on.n{background:var(--rdim);border-color:var(--red);color:var(--red)}
+.dtcbtn.on.p{background:var(--adim);border-color:var(--amber);color:var(--amber)}
+.ind2g{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ltag{font-family:var(--mono);font-size:8px;color:var(--amber);background:var(--adim);padding:2px 5px;border-radius:3px;margin-left:5px;letter-spacing:.04em}
+.img-row{display:flex;gap:5px;padding:5px 0;overflow-x:auto;scrollbar-width:none}
+.img-row::-webkit-scrollbar{display:none}
+.img-thumb{height:60px;border-radius:7px;object-fit:cover;flex-shrink:0;border:1px solid var(--border2);cursor:pointer}
+.cam-btn{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card2);border:1px dashed var(--border2);color:var(--muted2);font-size:11px;padding:8px 11px;border-radius:8px;cursor:pointer;font-family:var(--sans);margin-top:7px;width:100%;box-sizing:border-box}
+.obs-btn.g{border-color:var(--purple);color:var(--purple)}
 </style>
 </head>
 <body>
@@ -266,6 +312,9 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
     </button>
     <button class="icon-btn" onclick="syncNow()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+    </button>
+    <button class="icon-btn" onclick="showScreen('settings')" title="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
   </div>
 </div>
@@ -335,6 +384,7 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
     <div style="padding:0 18px">
       <button class="setbtn a" onclick="openER(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Evening Review</button>
       <button class="setbtn c" onclick="openAI()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>AI Extract</button>
+      <button class="setbtn obs-btn g" onclick="exportObsidian()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>Export to Obsidian (copies markdown)</button>
     </div>
     <div class="setsec">
       <div class="setrow"><div class="setlbl"><p>Auto-save</p><span>Saves on every change</span></div><label class="toggle"><input type="checkbox" checked><span class="tslider"></span></label></div>
@@ -359,7 +409,7 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
   </div>
 </div>
 <nav class="bottomnav">
-  <button class="nav-btn active" id="nav-today" onclick="showScreen('today')"><div class="nav-pip"></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>Today</button>
+  <button class="nav-btn active" id="nav-today" onclick="showScreen('today')"><div class="nav-pip"></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>Session</button>
   <button class="nav-btn" id="nav-calendar" onclick="showScreen('calendar')"><div class="nav-pip"></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendar</button>
   <button class="nav-btn" id="nav-trades" onclick="showScreen('trades')"><div class="nav-pip"></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>Trades</button>
   <button class="nav-btn" id="nav-stats" onclick="showScreen('stats')"><div class="nav-pip"></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Stats</button>
@@ -630,6 +680,10 @@ function buildAlertEmpty(){
   return '<div style="padding:0 18px 10px"><button onclick="openM(\'m-alert\')" style="width:100%;background:none;border:1px dashed rgba(245,158,11,0.3);color:var(--amber);font-size:11px;padding:9px;border-radius:10px;cursor:pointer;font-family:var(--mono);letter-spacing:1px">+ SET ALERT</button></div>';
 }
 function renderToday(){
+  var mt=getModeToggle();
+  if(btMode==='BACKTEST'){renderBTSession(mt);return;}
+  var ydCard=getYesterdayCard();
+  var pmCard=getPreMarketCard(new Date().toISOString().slice(0,10));
   const open=mktOpen(),cs=curSeg(),today=new Date().toISOString().slice(0,10);
   const si=SEGS.findIndex(s=>s.id===cs);
   const dots=SEGS.map((s,i)=>'<div class="spip '+(i<si?'done':i===si?'cur':'')+'"></div>').join('');
@@ -659,6 +713,7 @@ function renderToday(){
       if(l.marketCondition)html+='<span style="color:var(--cyan)">'+l.marketCondition+'</span> ';
       if(l.emotionalState)html+='<span style="color:var(--red)">'+l.emotionalState+'</span> ';
       html+=l.observation||'';
+      if(l.images&&l.images.length)html+='<div class="img-row">'+l.images.map(function(i){return'<img src="'+i+'" class="img-thumb">';}).join('')+'</div>';
       html+='</div>';
     });
     html+='</div>';
@@ -669,7 +724,7 @@ function renderToday(){
   const activeAlertsToday=alerts.filter(a=>a.active!==false&&a.type==='time');
   const alertBar=activeAlertsToday.length?buildAlertBar(activeAlertsToday):buildAlertEmpty();
   const atHTML=actTrades.map(t=>'<div class="atrow" onclick="selTradeGo('+t.id+')"><div><div style="display:flex;align-items:center;gap:6px"><span style="font-family:var(--mono);font-size:14px;color:var(--white)">'+t.symbol+'</span><span class="badge '+(t.direction==='BUY'?'bb':'bs')+'">'+t.direction+'</span><span class="badge '+(t.tradeType==='SWING'?'bsw':'bi')+'">'+(t.tradeType||'INTRADAY')+'</span></div><div style="font-size:10px;color:var(--muted2);margin-top:2px">'+((t.logs||[]).length)+'/8 phases · '+t.status+'</div></div><svg viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2" width="15" height="15"><path d="M9 18l6-6-6-6"/></svg></div>').join('');
-  document.getElementById('today-content').innerHTML=
+  document.getElementById('today-content').innerHTML= mt + ydCard + pmCard +
     '<div class="mbar '+(open?'open':'closed')+'" onclick="renderToday()"><div><div class="mbar-lbl" style="color:'+mColor+'">'+(open?'MARKET OPEN':'MARKET CLOSED')+'</div><div class="mbar-time">'+timeStr+' · '+(SEGS.find(s=>s.id===cs)?.label||'')+'</div></div><svg viewBox="0 0 24 24" fill="none" stroke="'+mColor+'" stroke-width="2" width="17" height="17"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg></div>'+
     '<div class="seg-prog">'+dots+'</div>'+
     epPrompt+planBar+alertBar+
@@ -687,18 +742,20 @@ function renderToday(){
 // SEG LOG
 function openSegLog(segId,segLabel){
   window._segId=segId;window._segLabel=segLabel;
+  if(btMode==='BACKTEST'){openBTSegLog(segId,segLabel);return;}
   const ov=document.createElement('div');ov.className='overlay';
   ov.onclick=function(e){if(e.target===ov)ov.remove();};
-  ov.innerHTML='<div class="modal"><div class="mhandle"></div><div class="mtitle" style="color:var(--amber)">'+segLabel.toUpperCase()+'</div><div class="field"><label>OBSERVATION</label><textarea id="so-obs" placeholder="What are you seeing? Price structure, levels, momentum..." style="min-height:80px"></textarea></div><div class="field"><label>MARKET CONDITION</label><div class="chip-group">'+['Trending Up','Trending Down','Range Bound','High Volatility','Low Volatility','Consolidating','News Driven'].map(c=>'<div class="mkt-chip" onclick="this.classList.toggle(\'active\')">'+c+'</div>').join('')+'</div></div><div class="field"><label>EMOTIONAL STATE</label><div class="chip-group">'+['Calm','Patient','Confident','FOMO','Anxious','Frustrated','Disciplined'].map(c=>'<div class="emo-chip" onclick="this.classList.toggle(\'active\')">'+c+'</div>').join('')+'</div></div><div class="macts"><button class="btn-x" onclick="this.closest(\'.overlay\').remove()">Cancel</button><button class="btn-amber" onclick="saveSegLog(this)">Save</button></div></div>';
+  ov.innerHTML='<div class="modal"><div class="mhandle"></div><div class="mtitle" style="color:var(--amber)">'+segLabel.toUpperCase()+'</div><div class="field"><label>OBSERVATION</label><textarea id="so-obs" placeholder="What are you seeing? Price structure, levels, momentum..." style="min-height:80px"></textarea></div><div class="field"><label>MARKET CONDITION</label><div class="chip-group">'+['Trending Up','Trending Down','Range Bound','High Volatility','Low Volatility','Consolidating','News Driven'].map(c=>'<div class="mkt-chip" onclick="this.classList.toggle(\'active\')">'+c+'</div>').join('')+'</div></div><div class="field"><label>EMOTIONAL STATE</label><div class="chip-group">'+['Calm','Patient','Confident','FOMO','Anxious','Frustrated','Disciplined'].map(c=>'<div class="emo-chip" onclick="this.classList.toggle(\'active\')">'+c+'</div>').join('')+'</div></div><label class="cam-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Add Chart Photo<input type="file" accept="image/*" capture="environment" onchange="pickPhoto(this)" style="display:none"></label><div class="macts"><button class="btn-x" onclick="_pendImgs=[];this.closest(\'.overlay\').remove()">Cancel</button><button class="btn-amber" onclick="saveSegLog(this)">Save</button></div></div>';
   document.body.appendChild(ov);
   setTimeout(()=>ov.querySelector('#so-obs').focus(),300);
 }
 function saveSegLog(btn){
+  var imgs=_pendImgs.slice();_pendImgs=[];
   const ov=btn.closest('.overlay');
   const obs=ov.querySelector('#so-obs').value.trim();if(!obs){ov.remove();return;}
   const mkt=Array.from(ov.querySelectorAll('.mkt-chip.active')).map(c=>c.textContent).join(', ');
   const emo=Array.from(ov.querySelectorAll('.emo-chip.active')).map(c=>c.textContent).join(', ');
-  sessions.unshift({id:gid(),_type:'session',date:new Date().toISOString().slice(0,10),segmentId:window._segId,segmentLabel:window._segLabel,observation:obs,marketCondition:mkt,emotionalState:emo,createdAt:Date.now(),updatedAt:Date.now()});
+  sessions.unshift({id:gid(),_type:'session',date:new Date().toISOString().slice(0,10),segmentId:window._segId,segmentLabel:window._segLabel,observation:obs,marketCondition:mkt,emotionalState:emo,images:imgs,mode:'LIVE',createdAt:Date.now(),updatedAt:Date.now()});
   save();ov.remove();renderToday();
 }
 
@@ -1117,6 +1174,220 @@ function seedCurriculum(){
   if(principles.length>0)return;
   [{id:1,title:'Phase 1 — HTML + CSS + JavaScript',body:'Start at freeCodeCamp.org — Responsive Web Design certification. 1 hour daily. First milestone: open OBT index.html in a text editor and recognise what each line does.',category:'general',source:'OBT Learning Curriculum'},{id:2,title:'Phase 2 — React',body:'React powers modern web apps. Once you know React, React Native for mobile is a natural extension. Build a mini version of OBT in React.',category:'general',source:'OBT Learning Curriculum'},{id:3,title:'Phase 3 — React Native',body:'Build OBT as a native iOS app. Expo makes React Native dramatically simpler. Your spec is already written — OBT is the project.',category:'general',source:'OBT Learning Curriculum'},{id:4,title:'Phase 4 — Backend (Node.js + Supabase)',body:'Real cloud sync, team accounts, data persistence. Supabase is free to start. This makes OBT a proper multi-device product.',category:'general',source:'OBT Learning Curriculum'},{id:5,title:'First Coding Milestone',body:'Make one small change to OBT yourself — change a colour, a label, or a button text. Upload to GitHub, see it live on your phone. That first change is when everything clicks.',category:'general',source:'OBT Learning Curriculum'}].forEach(p=>principles.push({...p,createdAt:Date.now(),updatedAt:Date.now()}));
   save();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DUAL MODE + PHOTO + YESTERDAY + PREMARKET + OBSIDIAN
+// ═══════════════════════════════════════════════════════════════════════════
+var btMode='LIVE',btDate=new Date().toISOString().slice(0,10),btHypo='',_btG='',_btDTC='',_pendImgs=[];
+try{btMode=localStorage.getItem('tj_btmode')||'LIVE';btDate=localStorage.getItem('tj_btdate')||btDate;btHypo=localStorage.getItem('tj_bthypo')||'';}catch(e){}
+
+function setBTMode(m){btMode=m;localStorage.setItem('tj_btmode',m);renderToday();}
+function setBTDate(d){btDate=d;localStorage.setItem('tj_btdate',d);renderToday();}
+function setBTHypo(v){btHypo=v;localStorage.setItem('tj_bthypo',v);}
+function setBTDTC(v,el){_btDTC=v;el.closest('.dtcbtn-row').querySelectorAll('.dtcbtn').forEach(function(b){b.classList.remove('on');});el.classList.add('on');}
+function setBTGrade(g,el){_btG=g;el.closest('.cr').querySelectorAll('.cbtn').forEach(function(b){b.className='cbtn';});el.className='cbtn a-grade';}
+
+function getModeToggle(){
+  return'<div class="stat-toggle" style="margin:10px 18px 6px">'
+    +'<button class="stbtn'+(btMode==='LIVE'?' active':'')+'" id="mode-live" onclick="setBTMode(\'LIVE\')">&#9679; Live Journal</button>'
+    +'<button class="stbtn'+(btMode==='BACKTEST'?' active':'')+'" id="mode-bt" onclick="setBTMode(\'BACKTEST\')">&#9670; Backtest</button></div>';
+}
+
+function getYesterdayCard(){
+  var yd=new Date();yd.setDate(yd.getDate()-1);
+  var yds=yd.toISOString().slice(0,10);
+  var rev=sessions.find(function(s){return s.date===yds&&(s._reviewType==='evening'||s._type==='evening');});
+  if(!rev)return'';
+  var gradeCol=rev.grade&&['A','A+'].includes(rev.grade)?'var(--green)':rev.grade&&['D','F'].includes(rev.grade)?'var(--red)':'var(--amber)';
+  return'<div class="yday-card">'
+    +'<div class="yday-head"><span class="yday-title">YESTERDAY &mdash; '+yds+'</span>'
+    +(rev.grade?'<span class="yday-grade" style="color:'+gradeCol+'">'+rev.grade+'</span>':'')+'</div>'
+    +'<div class="yday-body">'
+    +(rev.lesson?'<div class="yday-lesson">'+rev.lesson+'</div>':'')
+    +(rev.missed?'<div class="yday-row">&#9651; Missed: <b>'+rev.missed+'</b></div>':'')
+    +(rev.observed?'<div class="yday-row">Observed: <b>'+rev.observed.slice(0,110)+(rev.observed.length>110?'&hellip;':'')+'</b></div>':'')
+    +'</div></div>';
+}
+
+function getPreMarketCard(date){
+  var plan=plans.find(function(p){return p.date===date;});
+  var pmLog=sessions.find(function(s){return s.date===date&&s.segmentId==='premarket'&&s.mode!=='BACKTEST';});
+  if(!plan&&!pmLog){
+    return'<div style="margin:0 18px 10px"><button onclick="openPlan(\''+date+'\')" style="width:100%;background:none;border:1px dashed rgba(6,182,212,0.3);color:var(--cyan);font-size:11px;padding:10px;border-radius:10px;cursor:pointer;font-family:var(--mono);letter-spacing:1px">+ PRE-MARKET PLAN</button></div>';
+  }
+  var biasClass=plan?(plan.bias==='bullish'?'bull':plan.bias==='bearish'?'bear':'neut'):'neut';
+  var biasLabel=plan?(plan.bias||'neutral').toUpperCase():'—';
+  var levels=plan&&plan.levels?plan.levels.split(',').map(function(l){return'<span class="pm-level">'+l.trim()+'</span>';}).join(''):'';
+  var regime=pmLog&&pmLog.btData&&pmLog.btData.regime?pmLog.btData.regime:'';
+  var events=pmLog&&pmLog.btData&&pmLog.btData.l0events?pmLog.btData.l0events:'';
+  return'<div class="pm-card">'
+    +'<div class="pm-head"><span class="pm-title">PRE-MARKET</span>'
+    +'<button class="pm-log-btn" onclick="openSegLog(\'premarket\',\'Pre-Market\')">+ Log</button></div>'
+    +'<div class="pm-body">'
+    +(plan?'<span class="pm-bias '+biasClass+'">'+biasLabel+'</span>':'')
+    +(levels?'<div style="margin-bottom:6px">'+levels+'</div>':'')
+    +(regime?'<div class="pm-row">Regime: <b>'+regime+'</b></div>':'')
+    +(plan&&plan.watch?'<div class="pm-row">Watch: <b>'+plan.watch+'</b></div>':'')
+    +(events?'<div class="pm-row">Events: <b>'+events+'</b></div>':'')
+    +(pmLog&&pmLog.observation?'<div class="pm-row" style="margin-top:5px;color:var(--muted2)">'+pmLog.observation.slice(0,120)+'</div>':'')
+    +'</div></div>';
+}
+
+function pickPhoto(input){
+  var file=input.files[0];if(!file)return;
+  var r=new FileReader();
+  r.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      var max=800,w=img.width,h=img.height;
+      if(w>max){h=Math.round(h*max/w);w=max;}
+      if(h>max){w=Math.round(w*max/h);h=max;}
+      var c=document.createElement('canvas');c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      var b64=c.toDataURL('image/jpeg',0.72);
+      _pendImgs.push(b64);
+      var modal=input.closest('.modal');
+      var row=modal.querySelector('.pending-imgs');
+      if(!row){row=document.createElement('div');row.className='img-row pending-imgs';modal.querySelector('.cam-btn').after(row);}
+      var el=document.createElement('img');el.src=b64;el.className='img-thumb';el.title='Tap to remove';
+      el.onclick=function(){_pendImgs=_pendImgs.filter(function(x){return x!==b64;});el.remove();};
+      row.appendChild(el);
+    };
+    img.src=e.target.result;
+  };
+  r.readAsDataURL(file);
+  input.value='';
+}
+
+var DTS=['—','TR','TTR','SPT','SAC','TREND_REVERSAL','TFO','BCTD'];
+function mkDtSel(id){return'<select id="'+id+'">'+DTS.map(function(o){return'<option>'+o+'</option>';}).join('')+'</select>';}
+
+function getBTLayerHTML(segId){
+  var su=['—','H1','H2','H3','H4','L1','L2','L3','L4','MTR','FAILED_BO','WEDGE_FLAG','CHANNEL_BO','CONTINUATION','REVERSAL','OTHER'];
+  var suSel='<select id="so-setup">'+su.map(function(o){return'<option>'+o+'</option>';}).join('')+'</select>';
+  var dirSel='<select id="so-dir"><option>—</option><option>LONG</option><option>SHORT</option></select>';
+  var resSel='<select id="so-result"><option>—</option><option>WIN</option><option>LOSS</option><option>BE</option><option>MISSED</option><option>SKIPPED</option></select>';
+  if(segId==='premarket')return'<div class="bt-lh">LAYER 0 — MARKET CONTEXT</div><div class="bt-f"><label>GLOBAL CUES / GIFT NIFTY</label><input type="text" id="so-l0g" placeholder="US overnight, SGX, gap vs PDC..."></div><div class="bt-f"><label>EVENTS</label><input type="text" id="so-l0e" placeholder="RBI, expiry, earnings, F&amp;O settlement..."></div><div class="bt-lh">LAYER A — BIGGER PICTURE</div><div class="bt-f"><label>REGIME</label><select id="so-regime"><option>—</option><option>BULL_TREND</option><option>BEAR_TREND</option><option>RANGING</option><option>COMPRESSION</option><option>BULL_BIAS</option><option>BEAR_BIAS</option></select></div><div class="bt-f"><label>ATTEMPT</label><select id="so-attempt"><option>—</option><option>FIRST_PUSH</option><option>SECOND_PUSH</option><option>THIRD_PUSH_EXHAUSTION</option></select></div><div class="bt-f"><label>KEY LEVELS</label><input type="text" id="so-kl" placeholder="PDH, PDL, PWH, PWL, prior swings..."></div><div class="bt-lh">LAYER B — BREAKOUT / RETEST</div><div class="bt-f"><textarea id="so-lb" rows="2" placeholder="Level broken? Strong/weak? Retest held/failed? FAILED_BO setup?"></textarea></div>';
+  if(segId==='firstcandle'||segId==='opening')return'<div class="bt-lh">LAYER C — OPENING</div><div class="bt-f"><label>OPENING PATTERN</label><select id="so-op"><option>—</option><option>Gap and Go</option><option>Inside Bar</option><option>Outside Bar</option><option>ii Pattern</option><option>Failed Gap</option><option>Gap Fill</option></select></div><div class="bt-f"><label>DAY TYPE — INITIAL CALL</label>'+mkDtSel('so-dt-init')+'</div>';
+  if(segId==='earlymid')return'<div class="bt-lh">LAYER D — UPDATE (Bar 10 &middot; 20)</div><div class="bt-dt-row"><div class="bt-dt-cell"><label>BAR 10</label>'+mkDtSel('so-dt-b10')+'</div><div class="bt-dt-cell"><label>BAR 20</label>'+mkDtSel('so-dt-b20')+'</div></div><div class="bt-lh">LAYER E — SETUP SEEN</div><div class="bt-f"><label>SETUP</label>'+suSel+'</div><div class="bt-f"><label>DIRECTION</label>'+dirSel+'</div><div class="bt-f"><label>RESULT</label>'+resSel+'</div>';
+  if(segId==='latermid')return'<div class="bt-lh">LAYER D — UPDATE (Bar 30 &middot; 45)</div><div class="bt-dt-row"><div class="bt-dt-cell"><label>BAR 30</label>'+mkDtSel('so-dt-b30')+'</div><div class="bt-dt-cell"><label>BAR 45</label>'+mkDtSel('so-dt-b45')+'</div></div><div class="bt-lh">LAYER E — SETUP SEEN</div><div class="bt-f"><label>SETUP</label>'+suSel+'</div><div class="bt-f"><label>DIRECTION</label>'+dirSel+'</div><div class="bt-f"><label>RESULT</label>'+resSel+'</div>';
+  if(segId==='closing')return'<div class="bt-lh">LAYER D — FINAL DAY TYPE</div><div class="bt-f"><label>FINAL CALL</label>'+mkDtSel('so-dt-final')+'</div><div class="bt-lh">LAYER F — INDICATOR CONFLUENCE</div><div class="ind2g"><div class="bt-f"><label>KST</label><input type="text" id="so-kst" placeholder="reading..."></div><div class="bt-f"><label>RSI</label><input type="text" id="so-rsi" placeholder="reading..."></div><div class="bt-f"><label>BOLLINGER</label><input type="text" id="so-bb" placeholder="reading..."></div><div class="bt-f"><label>ICHIMOKU</label><input type="text" id="so-ichi" placeholder="chikou vs cloud..."></div></div>';
+  if(segId==='postmarket')return'<div class="bt-lh">DEBRIEF</div><div class="bt-f"><label>CALLED DAY TYPE CORRECTLY?</label><div class="dtcbtn-row"><div class="dtcbtn y" onclick="setBTDTC(\'y\',this)">YES</div><div class="dtcbtn n" onclick="setBTDTC(\'n\',this)">NO</div><div class="dtcbtn p" onclick="setBTDTC(\'p\',this)">PARTIAL</div></div></div><div class="bt-f"><label>ACTUAL DAY TYPE</label>'+mkDtSel('so-adt')+'</div><div class="bt-f"><label>SAW CORRECTLY</label><textarea id="so-saw" rows="2" placeholder="Which layers did I read right?"></textarea></div><div class="bt-f"><label>MISSED</label><textarea id="so-missedbt" rows="2" placeholder="What did I miss? Enter too early/late?"></textarea></div><div class="bt-f"><label>KEY LESSON</label><textarea id="so-lessonbt" rows="2" placeholder="The single most important takeaway" style="border-color:rgba(245,158,11,0.4);background:rgba(245,158,11,0.03)"></textarea></div><div class="bt-f"><label>GRADE</label><div class="cr"><button class="cbtn" onclick="setBTGrade(\'A\',this)">A+</button><button class="cbtn" onclick="setBTGrade(\'B\',this)">B+</button><button class="cbtn" onclick="setBTGrade(\'C\',this)">C</button><button class="cbtn" onclick="setBTGrade(\'D\',this)">D</button></div></div>';
+  return'';
+}
+
+function openBTSegLog(segId,segLabel){
+  window._segId=segId;window._segLabel=segLabel;
+  _btDTC='';_btG='';_pendImgs=[];
+  var layerH=getBTLayerHTML(segId);
+  var col=segId==='premarket'?'var(--cyan)':segId==='postmarket'?'var(--green)':'var(--amber)';
+  var lmap={premarket:'L0·A·B',firstcandle:'L-C',opening:'L-C·D',earlymid:'L-D·E',latermid:'L-D·E',closing:'L-D·F',postmarket:'Review'};
+  var ov=document.createElement('div');ov.className='overlay';
+  ov.onclick=function(e){if(e.target===ov){_pendImgs=[];ov.remove();}};
+  ov.innerHTML='<div class="modal"><div class="mhandle"></div>'
+    +'<div class="mtitle" style="color:'+col+'">'+segLabel.toUpperCase()+' <span style="font-size:9px;opacity:.6">'+(lmap[segId]||'')+'</span></div>'
+    +layerH
+    +'<div class="field" style="margin-top:8px"><label>OBSERVATION</label>'
+    +'<textarea id="so-obs" placeholder="What are you seeing? Price structure, levels, momentum..." style="min-height:70px"></textarea></div>'
+    +'<div class="field"><label>MARKET CONDITION</label><div class="chip-group">'
+    +['Trending Up','Trending Down','Range Bound','High Volatility','Low Volatility','Consolidating','News Driven'].map(function(c){return'<div class="mkt-chip" onclick="this.classList.toggle(\'active\')">'+c+'</div>';}).join('')
+    +'</div></div>'
+    +'<label class="cam-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Add Chart Photo<input type="file" accept="image/*" capture="environment" onchange="pickPhoto(this)" style="display:none"></label>'
+    +'<div class="macts"><button class="btn-x" onclick="_pendImgs=[];this.closest(\'.overlay\').remove()">Cancel</button>'
+    +'<button class="btn-amber" onclick="saveBTSegLog(this)">Save</button></div></div>';
+  document.body.appendChild(ov);
+  setTimeout(function(){var f=ov.querySelector('#so-obs');if(f)f.focus();},300);
+}
+
+function saveBTSegLog(btn){
+  var ov=btn.closest('.overlay');
+  function gv(id){var el=ov.querySelector('#'+id);return el?el.value.trim():'';}
+  var obs=gv('so-obs');var seg=window._segId;
+  var bd={};
+  if(seg==='premarket'){bd.l0global=gv('so-l0g');bd.l0events=gv('so-l0e');bd.regime=gv('so-regime');bd.attempt=gv('so-attempt');bd.keyLevels=gv('so-kl');bd.lb=gv('so-lb');}
+  else if(seg==='firstcandle'||seg==='opening'){bd.openPattern=gv('so-op');bd.dtInit=gv('so-dt-init');bd.dt=bd.dtInit;}
+  else if(seg==='earlymid'){bd.dtB10=gv('so-dt-b10');bd.dtB20=gv('so-dt-b20');bd.dt=bd.dtB20&&bd.dtB20!=='—'?bd.dtB20:bd.dtB10;bd.setup=gv('so-setup');bd.direction=gv('so-dir');bd.result=gv('so-result');}
+  else if(seg==='latermid'){bd.dtB30=gv('so-dt-b30');bd.dtB45=gv('so-dt-b45');bd.dt=bd.dtB45&&bd.dtB45!=='—'?bd.dtB45:bd.dtB30;bd.setup=gv('so-setup');bd.direction=gv('so-dir');bd.result=gv('so-result');}
+  else if(seg==='closing'){bd.dtFinal=gv('so-dt-final');bd.kst=gv('so-kst');bd.rsi=gv('so-rsi');bd.bb=gv('so-bb');bd.ichi=gv('so-ichi');bd.dt=bd.dtFinal;}
+  else if(seg==='postmarket'){bd.dtCorrect=_btDTC;bd.actualDt=gv('so-adt');bd.sawRight=gv('so-saw');bd.missed=gv('so-missedbt');bd.lesson=gv('so-lessonbt');bd.grade=_btG;}
+  var mkt=Array.from(ov.querySelectorAll('.mkt-chip.active')).map(function(c){return c.textContent;}).join(', ');
+  var imgs=_pendImgs.slice();_pendImgs=[];
+  sessions.unshift({id:gid(),_type:'session',mode:'BACKTEST',btDate:btDate,btHypo:btHypo,date:btDate,segmentId:seg,segmentLabel:window._segLabel,observation:obs,marketCondition:mkt,emotionalState:'',images:imgs,btData:bd,createdAt:Date.now(),updatedAt:Date.now()});
+  save();ov.remove();renderToday();
+}
+
+function renderBTSession(mt){
+  var btSess=sessions.filter(function(s){return s.btDate===btDate&&s.mode==='BACKTEST';});
+  var loggedSegs=new Set(btSess.filter(function(s){return s.segmentId;}).map(function(s){return s.segmentId;}));
+  var dots=SEGS.map(function(s){return'<div class="spip '+(loggedSegs.has(s.id)?'done':'')+'"></div>';}).join('');
+  var sum={};
+  btSess.forEach(function(l){var d=l.btData||{};if(d.regime&&d.regime!=='—')sum.regime=d.regime;if(d.attempt&&d.attempt!=='—')sum.attempt=d.attempt;if(d.dtFinal&&d.dtFinal!=='—')sum.dtFinal=d.dtFinal;if(d.actualDt&&d.actualDt!=='—')sum.actualDt=d.actualDt;if(d.dtCorrect)sum.dtCorrect=d.dtCorrect;if(d.lesson)sum.lesson=d.lesson;if(d.grade)sum.grade=d.grade;});
+  var sumH='';
+  if(Object.keys(sum).length>0){
+    var dc=sum.dtCorrect==='y'?'var(--green)':sum.dtCorrect==='n'?'var(--red)':'var(--amber)';
+    var dm=sum.dtCorrect==='y'?'&#10003;':sum.dtCorrect==='n'?'&#10007;':'~';
+    sumH='<div class="bt-sum"><div style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--white);margin-bottom:9px">SESSION SUMMARY</div>'
+      +(sum.regime?'<div style="font-size:12px;color:var(--muted2);margin-bottom:5px">Regime: <b style="color:var(--white);font-weight:500">'+sum.regime+'</b>'+(sum.attempt?' &middot; '+sum.attempt.replace(/_/g,' '):'')+'</div>':'')
+      +(sum.dtFinal?'<div style="font-size:12px;color:var(--muted2);margin-bottom:5px">Called: <b style="color:var(--white);font-weight:500">'+sum.dtFinal+'</b>'+(sum.actualDt?' &rarr; Actual: <b style="color:'+dc+';font-weight:500">'+sum.actualDt+'</b> <span style="color:'+dc+'">'+dm+'</span>':'')+'</div>':'')
+      +(sum.lesson?'<div style="font-size:12px;color:var(--amber);border-left:2px solid var(--amber);padding-left:8px;margin-top:7px;font-style:italic;line-height:1.5">'+sum.lesson+'</div>':'')
+      +(sum.grade?'<div style="font-family:var(--mono);font-size:14px;color:var(--amber);font-weight:700;margin-top:8px">Grade: '+sum.grade+'</div>':'')
+      +'</div>';
+  }
+  var lmap={premarket:'L0·A·B',firstcandle:'L-C',opening:'L-C·D',earlymid:'L-D·E',latermid:'L-D·E',closing:'L-D·F',postmarket:'Review'};
+  var segCards=SEGS.map(function(sg){
+    var sgLogs=btSess.filter(function(s){return s.segmentId===sg.id;});
+    var done=sgLogs.length>0;
+    var ct='';
+    sgLogs.forEach(function(l){
+      var d=l.btData||{};
+      ct+='<div class="seg-entry">';
+      if(d.dt&&d.dt!=='—')ct+='<span style="color:var(--amber)">'+d.dt+'</span> ';
+      if(d.regime&&d.regime!=='—')ct+='<span style="color:var(--cyan)">'+d.regime+'</span> ';
+      if(d.setup&&d.setup!=='—')ct+='<span style="color:var(--purple)">'+d.setup+'</span> ';
+      if(d.direction&&d.direction!=='—')ct+='<span style="color:'+(d.direction==='LONG'?'var(--green)':'var(--red)')+'">'+d.direction+'</span> ';
+      if(d.result&&d.result!=='—')ct+='<b style="color:'+(d.result==='WIN'?'var(--green)':d.result==='LOSS'?'var(--red)':'var(--amber)')+'">'+d.result+'</b> ';
+      if(l.observation)ct+=l.observation;
+      if(d.lesson)ct+='<div style="color:var(--amber);font-size:10px;margin-top:3px;border-left:2px solid var(--amber);padding-left:6px;font-style:italic">'+d.lesson+'</div>';
+      if(l.images&&l.images.length)ct+='<div class="img-row">'+l.images.map(function(i){return'<img src="'+i+'" class="img-thumb">';}).join('')+'</div>';
+      ct+='</div>';
+    });
+    return'<div class="seg-card" style="'+(done?'border-color:rgba(16,185,129,0.2)':'')+'"><div class="seg-head">'
+      +'<div class="seg-icon" style="background:'+sg.color+'20">'+sg.icon+'</div>'
+      +'<div class="seg-info"><div style="display:flex;align-items:center"><div class="seg-name">'+sg.label.toUpperCase()+'</div><span class="ltag">'+lmap[sg.id]+'</span></div>'
+      +'<div class="seg-time">'+sg.time+'</div>'+(done?'<div class="seg-logged">logged</div>':'')+' </div>'
+      +'<button class="seg-btn'+(done?' ghost':'')+'" onclick="openSegLog(\''+sg.id+'\',\''+sg.label+'\')">'+( done?'Edit':'+ Log')+'</button>'
+      +'</div>'+ct+'</div>';
+  }).join('');
+  document.getElementById('today-content').innerHTML=mt
+    +'<div class="bt-bar"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+    +'<div style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--amber)">REPLAY SESSION</div>'
+    +'<span class="bt-badge">BACKTEST</span></div>'
+    +'<input type="date" value="'+btDate+'" onchange="setBTDate(this.value)" style="width:100%;background:var(--card);border:1px solid var(--border2);border-radius:8px;color:var(--white);font-size:13px;font-family:var(--mono);padding:8px 10px;-webkit-appearance:none">'
+    +'<input type="text" value="'+btHypo.replace(/"/g,'&quot;')+'" oninput="setBTHypo(this.value)" placeholder="Hypothesis or study focus..." style="width:100%;background:var(--card);border:1px solid var(--border2);border-radius:8px;color:var(--white);font-size:13px;font-family:var(--sans);padding:8px 10px;-webkit-appearance:none;margin-top:6px">'
+    +'</div><div class="seg-prog">'+dots+'</div>'
+    +sumH
+    +'<div style="padding:0 18px 7px"><div style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--muted2);margin-bottom:6px">SESSION TIMELINE</div></div>'
+    +segCards+'<div style="height:80px"></div>';
+}
+
+function exportObsidian(){
+  var date=new Date().toISOString().slice(0,10);
+  var plan=plans.find(function(p){return p.date===date;});
+  var rev=sessions.find(function(s){return s.date===date&&(s._reviewType==='evening'||s._type==='evening');});
+  var todSess=sessions.filter(function(s){return s.date===date&&s._type==='session'&&s.mode!=='BACKTEST';});
+  var todTrades=trades.filter(function(t){return new Date(t.createdAt).toISOString().slice(0,10)===date;});
+  var md='---\ndate: '+date+'\ntype: live-session\n';
+  if(plan)md+='bias: '+plan.bias+'\n';
+  if(rev&&rev.grade)md+='grade: '+rev.grade+'\n';
+  md+='---\n\n## Pre-Market\n';
+  if(plan){if(plan.bias)md+='**Bias:** '+plan.bias.toUpperCase()+'\n';if(plan.levels)md+='**Key Levels:** '+plan.levels+'\n';if(plan.watch)md+='**Watch:** '+plan.watch+'\n';}
+  if(todSess.length){md+='\n## Session Notes\n';todSess.forEach(function(s){md+='**'+s.segmentLabel+':** '+(s.observation||'')+'\n';});}
+  if(todTrades.length){md+='\n## Trades\n| Symbol | Dir | Outcome | P&L |\n|--------|-----|---------|-----|\n';todTrades.forEach(function(t){md+='| '+t.symbol+' | '+t.direction+' | '+t.winLoss+' | Rs.'+t.pnl+' |\n';});}
+  if(rev){md+='\n## Evening Review\n';if(rev.observed)md+='**Observed:** '+rev.observed+'\n';if(rev.missed)md+='**Missed:** '+rev.missed+'\n';if(rev.lesson)md+='\n> **Key Lesson:** '+rev.lesson+'\n';}
+  md+='\n#trading #nifty #journal\n';
+  try{navigator.clipboard.writeText(md).then(function(){showToast('Obsidian markdown copied','var(--cyan)');});}
+  catch(e){var el=document.createElement('textarea');el.value=md;el.style.cssText='position:fixed;opacity:0;top:0;left:0';document.body.appendChild(el);el.select();document.execCommand('copy');el.remove();showToast('Copied to clipboard','var(--cyan)');}
 }
 
 // AUTO BACKUP
