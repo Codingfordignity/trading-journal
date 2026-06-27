@@ -434,6 +434,7 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
   </div>
   <div class="screen" id="screen-settings">
     <div style="padding:14px 18px 6px"><div class="slabel">SETTINGS</div><div class="ssub">Data, sync and tools</div></div>
+    <div id="holiday-reminder-banner"></div>
     <div style="height:8px"></div>
     <div style="padding:0 18px">
       <button class="setbtn a" onclick="openER(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Evening Review</button>
@@ -581,6 +582,7 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
     </div></div>
     <div class="field"><label>STREAM</label><select id="tk-stream"></select></div>
     <div class="field"><label>TITLE</label><input type="text" id="tk-title" placeholder="e.g. Review FII data for swing watchlist"></div>
+    <div class="field"><label>TIME (optional)</label><input type="time" id="tk-time"></div>
     <div class="field" id="tk-target-field" style="display:none"><label>TARGET DATE (long-term only)</label><input type="date" id="tk-target"></div>
     <div class="field"><label>NOTES (optional)</label><textarea id="tk-notes" placeholder="Why this matters, milestone detail..."></textarea></div>
     <div class="macts"><button class="btn-x" onclick="closeM('m-task')">Cancel</button><button class="btn-save" onclick="saveTask()">Save</button></div>
@@ -647,7 +649,11 @@ function showScreen(n){
   if(n==='trades')renderTrades();
   if(n==='stats')renderStats();
   if(n==='research')renderResearch();
-  if(n==='settings')updateSync();
+  if(n==='settings'){updateSync();
+    var nextYr=checkHolidayDataReminder();
+    var hb=document.getElementById('holiday-reminder-banner');
+    if(hb)hb.innerHTML=nextYr?('<div style="margin:0 18px 10px;background:var(--adim);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--amber)">&#128197; '+nextYr+' NSE holiday dates not loaded yet. Ask Claude Code to fetch the official circular and add them to NSE_HOLIDAYS_BY_YEAR.</div>'):'';
+  }
   if(n==='goals')renderGoals();
 }
 function goTrades(){selTrade=null;showScreen('trades');}
@@ -750,13 +756,56 @@ function buildAlertBar(activeAlerts){
 function buildAlertEmpty(){
   return '<div style="padding:0 18px 10px"><button onclick="openM(\'m-alert\')" style="width:100%;background:none;border:1px dashed rgba(245,158,11,0.3);color:var(--amber);font-size:11px;padding:9px;border-radius:10px;cursor:pointer;font-family:var(--mono);letter-spacing:1px">+ SET ALERT</button></div>';
 }
+var NSE_HOLIDAYS_BY_YEAR={
+  2026:{
+    dates:['2026-01-26','2026-03-03','2026-03-26','2026-03-31','2026-04-03',
+      '2026-04-14','2026-05-01','2026-05-28','2026-06-26','2026-09-14',
+      '2026-10-02','2026-10-20','2026-11-10','2026-11-24','2026-12-25'],
+    names:{
+      '2026-01-26':'Republic Day','2026-03-03':'Holi','2026-03-26':'Ram Navami',
+      '2026-03-31':'Mahavir Jayanti','2026-04-03':'Good Friday','2026-04-14':"Ambedkar Jayanti",
+      '2026-05-01':'Maharashtra Day','2026-05-28':'Bakri Id','2026-06-26':'Muharram',
+      '2026-09-14':'Ganesh Chaturthi','2026-10-02':'Gandhi Jayanti','2026-10-20':'Dussehra',
+      '2026-11-10':'Diwali-Balipratipada','2026-11-24':'Gurpurb (Guru Nanak Dev)','2026-12-25':'Christmas'
+    }
+  }
+};
+function isMarketHoliday(dateStr){
+  var d=new Date(dateStr+'T12:00:00');
+  var dow=d.getDay();
+  if(dow===0||dow===6)return{holiday:true,name:dow===0?'Sunday':'Saturday',weekend:true};
+  var yr=d.getFullYear();
+  var yrData=NSE_HOLIDAYS_BY_YEAR[yr];
+  if(yrData&&yrData.dates.indexOf(dateStr)>=0)return{holiday:true,name:yrData.names[dateStr]||'Market Holiday',weekend:false};
+  if(!yrData)console.warn('OBT: no NSE holiday data loaded for '+yr+' — festival holidays for that year will not be detected (weekends still work). Ask Claude Code to add it.');
+  return{holiday:false};
+}
+function checkHolidayDataReminder(){
+  var now=new Date();
+  if(now.getMonth()!==11)return null;
+  var nextYr=now.getFullYear()+1;
+  if(NSE_HOLIDAYS_BY_YEAR[nextYr])return null;
+  return nextYr;
+}
+
 function renderToday(){
   var mt=getModeToggle();
   if(btMode==='BACKTEST'){renderBTSession(mt);return;}
+  var today=new Date().toISOString().slice(0,10);
+  var hCheck=isMarketHoliday(today);
   var ydCard=getYesterdayCard();
-  var pmCard=getPreMarketCard(new Date().toISOString().slice(0,10));
+  var pmCard=hCheck.holiday?'':getPreMarketCard(today);
   var ttStrip=getTodayTasksStrip();
-  const open=mktOpen(),cs=curSeg(),today=new Date().toISOString().slice(0,10);
+  var holidayBanner='';
+  if(hCheck.holiday){
+    holidayBanner='<div style="margin:0 18px 10px;background:var(--card);border:1px solid rgba(139,92,246,0.3);border-radius:14px;padding:14px 16px;text-align:center">'
+      +'<div style="font-size:28px;margin-bottom:6px">&#127958;</div>'
+      +'<div style="font-family:var(--mono);font-size:11px;letter-spacing:1.5px;color:var(--purple);margin-bottom:4px">MARKET CLOSED</div>'
+      +'<div style="font-size:13px;color:var(--white)">'+hCheck.name+'</div>'
+      +'<div style="font-size:11px;color:var(--muted2);margin-top:4px">No trading session today &mdash; daily tasks below are optional</div>'
+      +'</div>';
+  }
+  const open=mktOpen(),cs=curSeg();
   const si=SEGS.findIndex(s=>s.id===cs);
   const dots=SEGS.map((s,i)=>'<div class="spip '+(i<si?'done':i===si?'cur':'')+'"></div>').join('');
   const mColor=open?'var(--green)':'var(--muted2)';
@@ -796,13 +845,15 @@ function renderToday(){
   const activeAlertsToday=alerts.filter(a=>a.active!==false&&a.type==='time');
   const alertBar=activeAlertsToday.length?buildAlertBar(activeAlertsToday):buildAlertEmpty();
   const atHTML=actTrades.map(t=>'<div class="atrow" onclick="selTradeGo('+t.id+')"><div><div style="display:flex;align-items:center;gap:6px"><span style="font-family:var(--mono);font-size:14px;color:var(--white)">'+t.symbol+'</span><span class="badge '+(t.direction==='BUY'?'bb':'bs')+'">'+t.direction+'</span><span class="badge '+(t.tradeType==='SWING'?'bsw':'bi')+'">'+(t.tradeType||'INTRADAY')+'</span></div><div style="font-size:10px;color:var(--muted2);margin-top:2px">'+((t.logs||[]).length)+'/8 phases · '+t.status+'</div></div><svg viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2" width="15" height="15"><path d="M9 18l6-6-6-6"/></svg></div>').join('');
-  document.getElementById('today-content').innerHTML= mt + ydCard + pmCard + ttStrip +
+  document.getElementById('today-content').innerHTML= mt + ydCard + pmCard + holidayBanner + ttStrip +
+    (hCheck.holiday ? '' : (
     '<div class="mbar '+(open?'open':'closed')+'" onclick="renderToday()"><div><div class="mbar-lbl" style="color:'+mColor+'">'+(open?'MARKET OPEN':'MARKET CLOSED')+'</div><div class="mbar-time">'+timeStr+' · '+(SEGS.find(s=>s.id===cs)?.label||'')+'</div></div><svg viewBox="0 0 24 24" fill="none" stroke="'+mColor+'" stroke-width="2" width="17" height="17"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg></div>'+
     '<div class="seg-prog">'+dots+'</div>'+
     epPrompt+planBar+alertBar+
     (actTrades.length?'<div style="padding:0 18px 8px"><div style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--green);margin-bottom:7px">ACTIVE TRADES</div></div>'+atHTML:'')+
     '<div style="padding:0 18px 8px"><div style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--muted2);margin-bottom:7px">SESSION TIMELINE</div></div>'+
-    segCards+
+    segCards
+    )) +
     '<div class="today-acts">'+
     '<button class="tact g" onclick="openNewTrade()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Trade</button>'+
     '<button class="tact c" onclick="openAI()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>AI Extract</button>'+
@@ -1512,7 +1563,7 @@ function renderGoals(){
     list.innerHTML=filtered.map(function(t){
       var ms=t.milestones||[];var done=ms.filter(function(m){return m.done;}).length;
       var pct=ms.length?Math.round(done/ms.length*100):0;
-      return'<div class="lt-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div class="lt-title">'+t.title+'</div><button class="task-del" onclick="delTask('+t.id+')">&times;</button></div>'
+      return'<div class="lt-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div class="lt-title">'+t.title+'</div><div><button class="task-del" onclick="openEditTask('+t.id+')" style="color:var(--cyan);font-size:14px">&#9998;</button><button class="task-del" onclick="delTask('+t.id+')">&times;</button></div></div>'
         +'<span class="task-stream-tag" style="background:'+streamColor(t.stream)+'22;color:'+streamColor(t.stream)+'">'+streamLabel(t.stream)+'</span>'
         +(ms.length?'<div class="lt-track"><div class="lt-fill" style="width:'+pct+'%"></div></div>':'')
         +'<div class="lt-meta"><span>'+(ms.length?done+'/'+ms.length+' milestones':'No milestones yet')+'</span>'+(t.target?'<span>Target: '+t.target+'</span>':'')+'</div>'
@@ -1527,9 +1578,11 @@ function renderGoals(){
     var streak=calcStreak(t);
     return'<div class="task-card"><div class="task-check'+(doneToday?' done':'')+'" onclick="toggleTaskToday('+t.id+')">'+(doneToday?'<svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" width="12" height="12"><polyline points="20,6 9,17 4,12"/></svg>':'')+'</div>'
       +'<div class="task-body"><div class="task-title'+(doneToday?' done':'')+'">'+t.title+'</div>'
-      +'<div class="task-meta"><span class="task-stream-tag" style="background:'+streamColor(t.stream)+'22;color:'+streamColor(t.stream)+'">'+streamLabel(t.stream)+'</span>'
+      +'<div class="task-meta">'+(t.time?'<span class="task-streak" style="color:var(--cyan)">'+t.time+'</span>':'')+'<span class="task-stream-tag" style="background:'+streamColor(t.stream)+'22;color:'+streamColor(t.stream)+'">'+streamLabel(t.stream)+'</span>'
       +(streak>0?'<span class="task-streak">&#128293; '+streak+'</span>':'')+'</div>'
       +(t.notes?'<div style="font-size:11px;color:var(--muted2);margin-top:4px">'+t.notes+'</div>':'')+'</div>'
+      +'<button class="task-del" onclick="duplicateTaskAcrossStreams('+t.id+')" style="color:var(--amber);font-size:14px" title="Copy to all streams">&#10697;</button>'
+      +'<button class="task-del" onclick="openEditTask('+t.id+')" style="color:var(--cyan);font-size:14px">&#9998;</button>'
       +'<button class="task-del" onclick="delTask('+t.id+')">&times;</button></div>';
   }).join('');
 }
@@ -1556,13 +1609,29 @@ function toggleTaskToday(id){
 
 function delTask(id){if(!confirm('Delete this task?'))return;tasks=tasks.filter(function(t){return t.id!==id;});saveTasks();renderGoals();renderToday();}
 
+var editTaskId=null;
 function openNewTask(){
+  editTaskId=null;
   tkTier=gTier==='longterm'?'longterm':gTier;tkStream='VST';
   document.getElementById('task-mtitle').textContent='NEW TASK';
   document.getElementById('tk-title').value='';document.getElementById('tk-notes').value='';document.getElementById('tk-target').value='';
+  if(document.getElementById('tk-time'))document.getElementById('tk-time').value='';
   var sel=document.getElementById('tk-stream');sel.innerHTML=STREAMS.map(function(s){return'<option value="'+s.id+'">'+s.label+'</option>';}).join('');
   setTaskTier(tkTier);
   openM('m-task');setTimeout(function(){document.getElementById('tk-title').focus();},300);
+}
+function openEditTask(id){
+  var t=tasks.find(function(x){return x.id===id;});if(!t)return;
+  editTaskId=id;
+  document.getElementById('task-mtitle').textContent='EDIT TASK';
+  document.getElementById('tk-title').value=t.title||'';
+  document.getElementById('tk-notes').value=t.notes||'';
+  document.getElementById('tk-target').value=t.target||'';
+  if(document.getElementById('tk-time'))document.getElementById('tk-time').value=t.time||'';
+  var sel=document.getElementById('tk-stream');sel.innerHTML=STREAMS.map(function(s){return'<option value="'+s.id+'">'+s.label+'</option>';}).join('');
+  sel.value=t.stream;
+  setTaskTier(t.tier);
+  openM('m-task');
 }
 function setTaskTier(t){
   tkTier=t;
@@ -1574,18 +1643,42 @@ function saveTask(){
   var stream=document.getElementById('tk-stream').value;
   var notes=document.getElementById('tk-notes').value.trim();
   var target=document.getElementById('tk-target').value;
-  tasks.unshift({id:gid(),tier:tkTier,stream:stream,title:title,notes:notes,target:tkTier==='longterm'?target:'',completions:[],milestones:[],active:true,createdAt:Date.now()});
+  var time=document.getElementById('tk-time')?document.getElementById('tk-time').value:'';
+  if(editTaskId){
+    var t=tasks.find(function(x){return x.id===editTaskId;});
+    if(t){t.title=title;t.stream=stream;t.notes=notes;t.tier=tkTier;t.time=time;if(tkTier==='longterm')t.target=target;}
+  } else {
+    tasks.unshift({id:gid(),tier:tkTier,stream:stream,title:title,notes:notes,time:time,target:tkTier==='longterm'?target:'',completions:[],milestones:[],active:true,createdAt:Date.now()});
+  }
+  editTaskId=null;
   saveTasks();closeM('m-task');renderGoals();renderToday();
+}
+function duplicateTaskAcrossStreams(id){
+  var t=tasks.find(function(x){return x.id===id;});if(!t)return;
+  if(!confirm('Copy "'+t.title+'" to all 5 other streams?'))return;
+  var others=STREAMS.filter(function(s){return s.id!==t.stream;});
+  others.forEach(function(s){
+    tasks.unshift({id:gid()+Math.floor(Math.random()*999),tier:t.tier,stream:s.id,title:t.title,notes:t.notes,time:t.time||'',target:t.target||'',completions:[],milestones:[],active:true,createdAt:Date.now()});
+  });
+  saveTasks();renderGoals();renderToday();
+  showToast('Copied to all streams','var(--amber)');
 }
 
 function getTodayTasksStrip(){
   var today=todayStr();
   var daily=tasks.filter(function(t){return t.tier==='daily'&&t.active!==false;});
   if(!daily.length)return'';
+  daily=daily.slice().sort(function(a,b){
+    if(!a.time&&!b.time)return 0;
+    if(!a.time)return 1;
+    if(!b.time)return -1;
+    return a.time.localeCompare(b.time);
+  });
   var done=daily.filter(function(t){return(t.completions||[]).indexOf(today)>=0;}).length;
   var rows=daily.map(function(t){
     var doneToday=(t.completions||[]).indexOf(today)>=0;
     return'<div class="tt-row"><div class="tt-check'+(doneToday?' done':'')+'" onclick="toggleTaskToday('+t.id+')">'+(doneToday?'<svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" width="10" height="10"><polyline points="20,6 9,17 4,12"/></svg>':'')+'</div>'
+      +(t.time?'<span style="font-family:var(--mono);font-size:9px;color:var(--cyan)">'+t.time+'</span>':'')
       +'<span class="tt-row-title'+(doneToday?' done':'')+'">'+t.title+'</span>'
       +'<span class="task-stream-tag" style="background:'+streamColor(t.stream)+'22;color:'+streamColor(t.stream)+'">'+streamLabel(t.stream)+'</span></div>';
   }).join('');
