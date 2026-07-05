@@ -338,6 +338,22 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
 .er-task-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .add-task-fab{position:fixed;bottom:calc(58px + var(--safe));right:18px;z-index:90}
 .add-task-fab button{background:var(--green);border:none;color:#000;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(16,185,129,0.3)}
+/* ── EISENHOWER PRIORITY MATRIX ─────────────────────────────────────── */
+.flag-ico{cursor:pointer;font-size:13px;color:var(--muted);opacity:0.4;padding:0 2px;line-height:1;user-select:none}
+.flag-ico.active{color:var(--white);opacity:1}
+.quad-dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+.tt-sort-toggle{display:flex;background:var(--card2);border-radius:8px;padding:2px;border:1px solid var(--border2)}
+.tt-sort-btn{font-family:var(--mono);font-size:8px;letter-spacing:0.5px;padding:4px 7px;border:none;border-radius:6px;background:none;color:var(--muted2);cursor:pointer}
+.tt-sort-btn.active{background:var(--card);color:var(--white)}
+.matrix-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 18px 80px}
+.mx-cell{background:var(--card);border-radius:12px;border:1px solid var(--border);border-top:3px solid var(--border);overflow:hidden;display:flex;flex-direction:column}
+.mx-cell-head{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:8px 10px;border-bottom:1px solid var(--border)}
+.mx-cell-body{padding:4px 8px;flex:1;max-height:280px;overflow-y:auto}
+.mx-task{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:7px 2px;border-bottom:1px solid var(--border)}
+.mx-task:last-child{border-bottom:none}
+.mx-task-title{font-size:11px;color:var(--white);line-height:1.4}
+.mx-task-meta{margin-top:3px}
+.mx-empty{font-size:10px;color:var(--muted2);padding:12px 4px;text-align:center}
 </style>
 </head>
 <body>
@@ -354,6 +370,9 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
     </button>
     <button class="icon-btn" onclick="showScreen('goals')" title="Goals">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+    </button>
+    <button class="icon-btn" onclick="showScreen('matrix')" title="Priority Matrix">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
     </button>
     <button class="icon-btn" onclick="showScreen('settings')" title="Settings">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -431,6 +450,10 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
     </div>
     <div id="goals-list" style="padding-bottom:80px"></div>
     <div class="add-task-fab"><button onclick="openNewTask()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="19" height="19"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button></div>
+  </div>
+  <div class="screen" id="screen-matrix">
+    <div style="padding:14px 18px 6px"><div class="slabel">PRIORITY MATRIX</div><div class="ssub">Urgent &times; Important, across every stream and tier</div></div>
+    <div class="matrix-grid" id="matrix-grid"></div>
   </div>
   <div class="screen" id="screen-settings">
     <div style="padding:14px 18px 6px"><div class="slabel">SETTINGS</div><div class="ssub">Data, sync and tools</div></div>
@@ -655,6 +678,7 @@ function showScreen(n){
     if(hb)hb.innerHTML=nextYr?('<div style="margin:0 18px 10px;background:var(--adim);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--amber)">&#128197; '+nextYr+' NSE holiday dates not loaded yet. Ask Claude Code to fetch the official circular and add them to NSE_HOLIDAYS_BY_YEAR.</div>'):'';
   }
   if(n==='goals')renderGoals();
+  if(n==='matrix')renderMatrix();
 }
 function goTrades(){selTrade=null;showScreen('trades');}
 
@@ -1536,6 +1560,69 @@ var tkTier='daily',tkStream='VST';
 function loadTasks(){try{tasks=JSON.parse(localStorage.getItem('tj_tasks')||'[]');}catch(e){tasks=[];}if(!Array.isArray(tasks))tasks=[];}
 function saveTasks(){localStorage.setItem('tj_tasks',JSON.stringify(tasks));save();}
 
+// ── EISENHOWER PRIORITY MATRIX ──────────────────────────────────────
+var QUADRANTS={
+  Q1:{label:'Do Now',color:'#F43F5E'},
+  Q2:{label:'Schedule',color:'#06B6D4'},
+  Q3:{label:'Quick / Delegate',color:'#F59E0B'},
+  Q4:{label:'Later',color:'#8B5CF6'}
+};
+function getQuadrant(t){
+  var u=!!t.urgent,i=!!t.important;
+  if(u&&i)return'Q1';
+  if(!u&&i)return'Q2';
+  if(u&&!i)return'Q3';
+  return'Q4';
+}
+function quadrantOrder(t){return{Q1:1,Q2:2,Q3:3,Q4:4}[getQuadrant(t)];}
+function taskFlagIcons(t){
+  var q=getQuadrant(t),info=QUADRANTS[q];
+  var showDot=!!(t.urgent||t.important);
+  return'<span style="display:inline-flex;align-items:center;gap:5px" onclick="event.stopPropagation()">'
+    +'<span class="flag-ico'+(t.urgent?' active':'')+'" onclick="toggleUrgent('+t.id+')" title="Urgent">&#9889;</span>'
+    +'<span class="flag-ico'+(t.important?' active':'')+'" onclick="toggleImportant('+t.id+')" title="Important">&#9733;</span>'
+    +(showDot?'<span class="quad-dot" style="background:'+info.color+'" title="'+q+' — '+info.label+'"></span>':'')
+    +'</span>';
+}
+function toggleUrgent(id){
+  var t=tasks.find(function(x){return x.id===id;});if(!t)return;
+  t.urgent=!t.urgent;saveTasks();renderGoals();renderToday();
+  if(curScreen==='matrix')renderMatrix();
+}
+function toggleImportant(id){
+  var t=tasks.find(function(x){return x.id===id;});if(!t)return;
+  t.important=!t.important;saveTasks();renderGoals();renderToday();
+  if(curScreen==='matrix')renderMatrix();
+}
+function isTaskOpen(t){
+  if(t.active===false)return false;
+  if(t.tier==='longterm'){
+    var ms=t.milestones||[];
+    if(!ms.length)return true;
+    return ms.some(function(m){return!m.done;});
+  }
+  return(t.completions||[]).indexOf(todayStr())<0;
+}
+var taskSortMode='time';
+try{taskSortMode=localStorage.getItem('tj_tasksortmode')||'time';}catch(e){}
+function setTaskSortMode(m){taskSortMode=m;localStorage.setItem('tj_tasksortmode',m);renderToday();}
+function renderMatrix(){
+  var el=document.getElementById('matrix-grid');if(!el)return;
+  var open=tasks.filter(isTaskOpen);
+  el.innerHTML=['Q1','Q2','Q3','Q4'].map(function(qid){
+    var info=QUADRANTS[qid];
+    var qTasks=open.filter(function(t){return getQuadrant(t)===qid;});
+    var rows=qTasks.length?qTasks.map(function(t){
+      return'<div class="mx-task"><div class="mx-task-body"><div class="mx-task-title">'+t.title+'</div>'
+        +'<div class="mx-task-meta"><span class="task-stream-tag" style="background:'+streamColor(t.stream)+'22;color:'+streamColor(t.stream)+'">'+streamLabel(t.stream)+'</span></div></div>'
+        +taskFlagIcons(t)+'</div>';
+    }).join(''):'<div class="mx-empty">No tasks</div>';
+    return'<div class="mx-cell" style="border-top-color:'+info.color+'">'
+      +'<div class="mx-cell-head" style="color:'+info.color+'">'+qid+' &middot; '+info.label+'</div>'
+      +'<div class="mx-cell-body">'+rows+'</div></div>';
+  }).join('');
+}
+
 function streamColor(id){var s=STREAMS.find(function(x){return x.id===id;});return s?s.color:'var(--muted2)';}
 function streamLabel(id){var s=STREAMS.find(function(x){return x.id===id;});return s?s.label:id;}
 
@@ -1581,6 +1668,7 @@ function renderGoals(){
       +'<div class="task-meta">'+(t.time?'<span class="task-streak" style="color:var(--cyan)">'+t.time+'</span>':'')+'<span class="task-stream-tag" style="background:'+streamColor(t.stream)+'22;color:'+streamColor(t.stream)+'">'+streamLabel(t.stream)+'</span>'
       +(streak>0?'<span class="task-streak">&#128293; '+streak+'</span>':'')+'</div>'
       +(t.notes?'<div style="font-size:11px;color:var(--muted2);margin-top:4px">'+t.notes+'</div>':'')+'</div>'
+      +taskFlagIcons(t)
       +'<button class="task-del" onclick="duplicateTaskAcrossStreams('+t.id+')" style="color:var(--amber);font-size:14px" title="Copy to all streams">&#10697;</button>'
       +'<button class="task-del" onclick="openEditTask('+t.id+')" style="color:var(--cyan);font-size:14px">&#9998;</button>'
       +'<button class="task-del" onclick="delTask('+t.id+')">&times;</button></div>';
@@ -1648,7 +1736,7 @@ function saveTask(){
     var t=tasks.find(function(x){return x.id===editTaskId;});
     if(t){t.title=title;t.stream=stream;t.notes=notes;t.tier=tkTier;t.time=time;if(tkTier==='longterm')t.target=target;}
   } else {
-    tasks.unshift({id:gid(),tier:tkTier,stream:stream,title:title,notes:notes,time:time,target:tkTier==='longterm'?target:'',completions:[],milestones:[],active:true,createdAt:Date.now()});
+    tasks.unshift({id:gid(),tier:tkTier,stream:stream,title:title,notes:notes,time:time,target:tkTier==='longterm'?target:'',completions:[],milestones:[],active:true,urgent:false,important:false,createdAt:Date.now()});
   }
   editTaskId=null;
   saveTasks();closeM('m-task');renderGoals();renderToday();
@@ -1658,7 +1746,7 @@ function duplicateTaskAcrossStreams(id){
   if(!confirm('Copy "'+t.title+'" to all 5 other streams?'))return;
   var others=STREAMS.filter(function(s){return s.id!==t.stream;});
   others.forEach(function(s){
-    tasks.unshift({id:gid()+Math.floor(Math.random()*999),tier:t.tier,stream:s.id,title:t.title,notes:t.notes,time:t.time||'',target:t.target||'',completions:[],milestones:[],active:true,createdAt:Date.now()});
+    tasks.unshift({id:gid()+Math.floor(Math.random()*999),tier:t.tier,stream:s.id,title:t.title,notes:t.notes,time:t.time||'',target:t.target||'',completions:[],milestones:[],active:true,urgent:t.urgent||false,important:t.important||false,createdAt:Date.now()});
   });
   saveTasks();renderGoals();renderToday();
   showToast('Copied to all streams','var(--amber)');
@@ -1669,6 +1757,10 @@ function getTodayTasksStrip(){
   var daily=tasks.filter(function(t){return t.tier==='daily'&&t.active!==false;});
   if(!daily.length)return'';
   daily=daily.slice().sort(function(a,b){
+    if(taskSortMode==='priority'){
+      var qa=quadrantOrder(a),qb=quadrantOrder(b);
+      if(qa!==qb)return qa-qb;
+    }
     if(!a.time&&!b.time)return 0;
     if(!a.time)return 1;
     if(!b.time)return -1;
@@ -1677,12 +1769,18 @@ function getTodayTasksStrip(){
   var done=daily.filter(function(t){return(t.completions||[]).indexOf(today)>=0;}).length;
   var rows=daily.map(function(t){
     var doneToday=(t.completions||[]).indexOf(today)>=0;
+    var q=getQuadrant(t),info=QUADRANTS[q],showDot=!!(t.urgent||t.important);
     return'<div class="tt-row"><div class="tt-check'+(doneToday?' done':'')+'" onclick="toggleTaskToday('+t.id+')">'+(doneToday?'<svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" width="10" height="10"><polyline points="20,6 9,17 4,12"/></svg>':'')+'</div>'
       +(t.time?'<span style="font-family:var(--mono);font-size:9px;color:var(--cyan)">'+t.time+'</span>':'')
       +'<span class="tt-row-title'+(doneToday?' done':'')+'">'+t.title+'</span>'
+      +(showDot?'<span class="quad-dot" style="background:'+info.color+'" title="'+q+' — '+info.label+'"></span>':'')
       +'<span class="task-stream-tag" style="background:'+streamColor(t.stream)+'22;color:'+streamColor(t.stream)+'">'+streamLabel(t.stream)+'</span></div>';
   }).join('');
-  return'<div class="tt-strip"><div class="tt-head"><span class="tt-title">TODAY\'S TASKS</span><span class="tt-prog">'+done+'/'+daily.length+'</span></div><div class="tt-list">'+rows+'</div></div>';
+  var sortToggle='<div class="tt-sort-toggle">'
+    +'<button class="tt-sort-btn'+(taskSortMode==='time'?' active':'')+'" onclick="setTaskSortMode(\'time\')">By Time</button>'
+    +'<button class="tt-sort-btn'+(taskSortMode==='priority'?' active':'')+'" onclick="setTaskSortMode(\'priority\')">By Priority</button>'
+    +'</div>';
+  return'<div class="tt-strip"><div class="tt-head"><span class="tt-title">TODAY\'S TASKS</span>'+sortToggle+'<span class="tt-prog">'+done+'/'+daily.length+'</span></div><div class="tt-list">'+rows+'</div></div>';
 }
 
 function getTaskSnapshotForDate(dateStr){
