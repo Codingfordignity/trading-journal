@@ -1472,7 +1472,7 @@ function syncS2P(t){
 function setStatsView(v,el){document.querySelectorAll('.stbtn').forEach(b=>b.classList.remove('active'));el.classList.add('active');document.getElementById('stats-live-view').style.display=v==='live'?'block':'none';document.getElementById('stats-hist-view').style.display=v==='hist'?'block':'none';}
 function renderStats(){renderLiveStats();renderHistStats();}
 function renderLiveStats(){
-  const closed=trades.filter(t=>t.status==='CLOSED'&&t.winLoss!=='NONE');
+  const closed=trades.filter(t=>(t.status||'').toUpperCase()==='CLOSED'&&t.winLoss!=='NONE');
   const wins=closed.filter(t=>t.winLoss==='WIN'),losses=closed.filter(t=>t.winLoss==='LOSS'),bes=closed.filter(t=>t.winLoss==='BREAKEVEN');
   const totalPnl=closed.reduce((s,t)=>s+t.pnl,0),wr=closed.length?(wins.length/closed.length*100):0;
   const gains=wins.reduce((s,t)=>s+t.pnl,0),lossT=Math.abs(losses.reduce((s,t)=>s+t.pnl,0));
