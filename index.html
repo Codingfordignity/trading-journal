@@ -379,6 +379,14 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
 .dtcbtn.on.emo{background:var(--rdim);border-color:var(--red);color:var(--red)}
 .dtcbtn.on.obs{background:var(--cdim);border-color:var(--cyan);color:var(--cyan)}
 .dtcbtn.on.ant{background:var(--pdim);border-color:var(--purple);color:var(--purple)}
+/* ── SYMBOL WATCHLIST (obt_watchlist) ───────────────────────────────── */
+.dtcbtn.on.wfno{background:var(--cdim);border-color:var(--cyan);color:var(--cyan)}
+.dtcbtn.on.wswing{background:var(--pdim);border-color:var(--purple);color:var(--purple)}
+.dtcbtn.on.wscalp{background:var(--adim);border-color:var(--amber);color:var(--amber)}
+.dtcbtn.on.wlt{background:var(--gdim);border-color:var(--green);color:var(--green)}
+.dtcbtn.on.wgrowth{background:var(--rdim);border-color:var(--red);color:var(--red)}
+.cap-act-cyan{background:var(--cyan);color:#000}
+.wdrop-toggle{font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--muted2);padding:10px 2px;cursor:pointer}
 .wl-chip{font-size:11px;padding:5px 9px;border-radius:15px;border:1px solid rgba(139,92,246,0.3);color:var(--white);background:var(--card);cursor:pointer}
 .wl-chip:active{background:var(--pdim)}
 .wl-strip{margin:0 18px 10px;background:var(--card);border-radius:14px;border:1px solid rgba(139,92,246,0.2);overflow:hidden}
@@ -487,9 +495,10 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
   <!-- RESEARCH -->
   <div class="screen" id="screen-research">
     <div style="padding:14px 18px 6px"><div class="slabel">RESEARCH</div><div class="ssub">Insights and principles</div></div>
-    <div class="rtabs"><button class="rtab active" id="rtab-i" onclick="setRT('insights',this)">Insights</button><button class="rtab" id="rtab-p" onclick="setRT('playbook',this)">Playbook</button></div>
+    <div class="rtabs"><button class="rtab active" id="rtab-i" onclick="setRT('insights',this)">Insights</button><button class="rtab" id="rtab-p" onclick="setRT('playbook',this)">Playbook</button><button class="rtab" id="rtab-w" onclick="setRT('watchlist',this)">Watchlist</button></div>
     <div id="r-insights"></div>
     <div id="r-playbook" style="display:none;padding-bottom:80px"></div>
+    <div id="r-watchlist" style="display:none;padding-bottom:80px"></div>
     <div class="rfab" id="rfab"><button class="rfab-btn" onclick="rfabClick()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="19" height="19"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button></div>
   </div>
   <!-- SETTINGS -->
@@ -751,8 +760,9 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
   <div class="modal">
     <div class="mhandle"></div>
     <div class="cap-mode-toggle">
-      <button class="cap-mode-btn active" id="cap-mode-btn-capture" onclick="setCapMode('capture')">Quick Capture</button>
-      <button class="cap-mode-btn" id="cap-mode-btn-event" onclick="setCapMode('event')">Log Event</button>
+      <button class="cap-mode-btn active" id="cap-mode-btn-capture" onclick="setCapMode('capture')">Task</button>
+      <button class="cap-mode-btn" id="cap-mode-btn-event" onclick="setCapMode('event')">Event</button>
+      <button class="cap-mode-btn" id="cap-mode-btn-watch" onclick="setCapMode('watch')">Watch</button>
     </div>
     <div id="cap-body-capture">
       <div class="field">
@@ -785,6 +795,25 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
       </div></div>
       <div class="field"><label>SESSION PHASE</label><select id="ev-phase"><option value="pre-market">Pre-Market</option><option value="opening">Opening</option><option value="early-session">Early Session</option><option value="mid-session">Mid Session</option><option value="post-market">Post-Market</option></select></div>
     </div>
+    <div id="cap-body-watch" style="display:none">
+      <div class="field"><label>SYMBOL</label><input type="text" id="wt-sym" placeholder="RELIANCE, NIFTY 24500 CE..." autocapitalize="characters"></div>
+      <div class="field"><label>TYPE</label><div class="dtcbtn-row" id="wt-type-row">
+        <div class="dtcbtn wfno on" onclick="setWatchType('FNO Focus',this)">FNO FOCUS</div>
+        <div class="dtcbtn wswing" onclick="setWatchType('New Swing Entry',this)">SWING</div>
+        <div class="dtcbtn wscalp" onclick="setWatchType('New Scalp Entry',this)">SCALP</div>
+        <div class="dtcbtn wlt" onclick="setWatchType('Long Term Stocks',this)">LONG TERM</div>
+        <div class="dtcbtn wgrowth" onclick="setWatchType('Growth Stocks',this)">GROWTH</div>
+      </div></div>
+      <div class="field">
+        <label>NOTE</label>
+        <div style="position:relative">
+          <textarea id="wt-note" class="has-mic" rows="2" placeholder="Why watching / level to act at..."></textarea>
+          <button type="button" class="mic-btn" id="wt-note-mic" style="display:none" title="Voice input" onclick="toggleVoice('wt-note')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+        </div>
+        <div class="voice-msg" id="wt-note-voice-msg"></div>
+      </div>
+      <div class="field"><label>TAG (optional)</label><input type="text" id="wt-tag" list="wt-tag-list" placeholder="e.g. Breakout"><datalist id="wt-tag-list"></datalist></div>
+    </div>
     <div class="macts"><button class="btn-x" onclick="closeM('m-capture')">Cancel</button><button class="btn-save" id="cap-save-btn" style="background:var(--amber)" onclick="saveCapture()">Save</button></div>
   </div>
 </div>
@@ -806,6 +835,21 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
       <button class="btn-x" style="padding:0;font-size:12px" onclick="closeM('m-events')">Close</button>
     </div>
     <div id="events-list"></div>
+  </div>
+</div>
+<div class="overlay" id="m-watch-edit" style="display:none" onclick="if(event.target===this)closeM('m-watch-edit')">
+  <div class="modal"><div class="mhandle"></div><div class="mtitle" style="color:var(--purple)">EDIT WATCHLIST ITEM</div>
+    <div class="field"><label>SYMBOL</label><div id="wte-sym-label" style="font-size:13px;color:var(--white);padding:9px 11px;background:var(--card);border-radius:8px;border:1px solid var(--border2)">—</div></div>
+    <div class="field"><label>TYPE</label><div class="dtcbtn-row" id="wte-type-row">
+      <div class="dtcbtn wfno" onclick="setWteType('FNO Focus',this)">FNO FOCUS</div>
+      <div class="dtcbtn wswing" onclick="setWteType('New Swing Entry',this)">SWING</div>
+      <div class="dtcbtn wscalp" onclick="setWteType('New Scalp Entry',this)">SCALP</div>
+      <div class="dtcbtn wlt" onclick="setWteType('Long Term Stocks',this)">LONG TERM</div>
+      <div class="dtcbtn wgrowth" onclick="setWteType('Growth Stocks',this)">GROWTH</div>
+    </div></div>
+    <div class="field"><label>NOTE</label><textarea id="wte-note" placeholder="Why watching / level to act at..."></textarea></div>
+    <div class="field"><label>TAG (optional)</label><input type="text" id="wte-tag" list="wte-tag-list" placeholder="e.g. Breakout"><datalist id="wte-tag-list"></datalist></div>
+    <div class="macts"><button class="btn-x" onclick="closeM('m-watch-edit')">Cancel</button><button class="btn-save" onclick="saveWatchEdit()">Save</button></div>
   </div>
 </div>
 <script>
@@ -1298,6 +1342,7 @@ function openIntradayNew(){
   ntDir='BUY';setDir('BUY');
   document.getElementById('nt-type-label').textContent=ntTradeType;
   document.getElementById('nt-sym').value='';document.getElementById('nt-date').value=new Date().toISOString().slice(0,10);document.getElementById('nt-entry').value='';document.getElementById('nt-note').value='';
+  const pwc1=getPendingWatchConvert();if(pwc1)document.getElementById('nt-sym').value=pwc1.symbol;
   openM('m-newtrade');setTimeout(()=>document.getElementById('nt-sym').focus(),300);
 }
 function setDir(d){ntDir=d;document.getElementById('nt-buy').className='cbtn'+(d==='BUY'?' a-buy':'');document.getElementById('nt-sell').className='cbtn'+(d==='SELL'?' a-sell':'');}
@@ -1309,12 +1354,13 @@ function saveTrade(){
   const createdAt=new Date(dateVal).getTime()||Date.now();
   const t={id:gid(),symbol:sym,direction:ntDir,tradeType:ntTradeType,lifecycleShape:'intraday',status:'PLANNING',entryDate:dateVal,exitDate:null,entryPrice:entryVal,exitPrice:0,stopLoss:0,takeProfit:0,quantity:0,pnl:0,winLoss:'NONE',grade:'',note:noteVal,createdAt,updatedAt:Date.now(),logs:[]};
   if(entryVal>0){t.logs.push({phase:'ANTICIPATE',notes:'Planned entry at Rs.'+entryVal+(noteVal?' — '+noteVal:''),emotionalState:'',marketCondition:'',extractedKeywords:'planned',timestamp:createdAt});}
-  trades.unshift(t);save();closeM('m-newtrade');selTradeGo(t.id);
+  trades.unshift(t);save();linkPendingWatchToTrade(t.id);closeM('m-newtrade');selTradeGo(t.id);
 }
 function setScDir(d){scDir=d;document.getElementById('sc-buy').className='cbtn'+(d==='BUY'?' a-buy':'');document.getElementById('sc-sell').className='cbtn'+(d==='SELL'?' a-sell':'');}
 function openScalpNew(){
   scDir='BUY';setScDir('BUY');
   ['sc-sym','sc-entry','sc-exit','sc-qty','sc-result','sc-reason','sc-lesson'].forEach(id=>document.getElementById(id).value='');
+  const pwc2=getPendingWatchConvert();if(pwc2)document.getElementById('sc-sym').value=pwc2.symbol;
   openM('m-scalp');setTimeout(()=>document.getElementById('sc-sym').focus(),300);
 }
 function saveScalp(){
@@ -1329,12 +1375,13 @@ function saveScalp(){
   if(entryPrice>0&&exitPrice>0&&quantity>0){const m=scDir==='BUY'?1:-1;pnl=Math.round((exitPrice-entryPrice)*quantity*m*100)/100;winLoss=pnl>0?'WIN':pnl<0?'LOSS':'BREAKEVEN';}
   const today=new Date().toISOString().slice(0,10);
   const t={id:gid(),symbol:sym,direction:scDir,tradeType:ntTradeType||'Non-F&O Stock — Scalp',lifecycleShape:'scalp',status:'closed',entryDate:today,exitDate:today,entryPrice,exitPrice,quantity,pnl,winLoss,resultText,reason,lesson,grade:'',note:reason,createdAt:Date.now(),updatedAt:Date.now(),logs:[]};
-  trades.unshift(t);save();closeM('m-scalp');selTradeGo(t.id);
+  trades.unshift(t);save();linkPendingWatchToTrade(t.id);closeM('m-scalp');selTradeGo(t.id);
 }
 function setSwDir(d){swDir=d;document.getElementById('sw-buy').className='cbtn'+(d==='BUY'?' a-buy':'');document.getElementById('sw-sell').className='cbtn'+(d==='SELL'?' a-sell':'');}
 function openSwingNew(){
   swDir='BUY';setSwDir('BUY');
   ['sw-sym','sw-thesis','sw-entry','sw-stop','sw-target','sw-qty'].forEach(id=>document.getElementById(id).value='');
+  const pwc3=getPendingWatchConvert();if(pwc3)document.getElementById('sw-sym').value=pwc3.symbol;
   openM('m-swing-entry');setTimeout(()=>document.getElementById('sw-sym').focus(),300);
 }
 function saveSwingEntry(){
@@ -1346,10 +1393,11 @@ function saveSwingEntry(){
   const quantity=parseFloat(document.getElementById('sw-qty').value)||0;
   const today=new Date().toISOString().slice(0,10);
   const t={id:gid(),symbol:sym,direction:swDir,tradeType:ntTradeType,lifecycleShape:'swing',status:'open',entryDate:today,exitDate:null,thesis,entryPrice,stopLoss,takeProfit,quantity,exitPrice:0,pnl:0,winLoss:'NONE',grade:'',checkins:[],createdAt:Date.now(),updatedAt:Date.now(),logs:[]};
-  trades.unshift(t);save();closeM('m-swing-entry');selTradeGo(t.id);
+  trades.unshift(t);save();linkPendingWatchToTrade(t.id);closeM('m-swing-entry');selTradeGo(t.id);
 }
 function openLongtermNew(){
   ['lt-sym','lt-why','lt-val','lt-cat','lt-hold','lt-entry','lt-qty'].forEach(id=>document.getElementById(id).value='');
+  const pwc4=getPendingWatchConvert();if(pwc4)document.getElementById('lt-sym').value=pwc4.symbol;
   openM('m-longterm-entry');setTimeout(()=>document.getElementById('lt-sym').focus(),300);
 }
 function saveLongtermEntry(){
@@ -1363,7 +1411,7 @@ function saveLongtermEntry(){
   const today=new Date().toISOString().slice(0,10);
   const thesis=[why?'Why: '+why:'',valuation?'Valuation: '+valuation:'',catalysts?'Catalysts: '+catalysts:''].filter(Boolean).join('\n');
   const t={id:gid(),symbol:sym,direction:'BUY',tradeType:'Long-Term / Multibagger',lifecycleShape:'longterm',status:'open',entryDate:today,exitDate:null,thesis,thesisWhy:why,thesisValuation:valuation,thesisCatalysts:catalysts,holdPeriod,entryPrice,quantity,exitPrice:0,pnl:0,winLoss:'NONE',grade:'',reviews:[],createdAt:Date.now(),updatedAt:Date.now(),logs:[]};
-  trades.unshift(t);save();closeM('m-longterm-entry');selTradeGo(t.id);
+  trades.unshift(t);save();linkPendingWatchToTrade(t.id);closeM('m-longterm-entry');selTradeGo(t.id);
 }
 function openCheckin(mode){
   const t=trades.find(x=>x.id===selTrade);if(!t)return;
@@ -1590,9 +1638,9 @@ function renderHistStats(){
 }
 
 // RESEARCH
-function setRT(tab,el){curResTab=tab;document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));el.classList.add('active');document.getElementById('r-insights').style.display=tab==='insights'?'block':'none';document.getElementById('r-playbook').style.display=tab==='playbook'?'block':'none';const rfab=document.getElementById('rfab');if(rfab)rfab.style.display=tab==='playbook'?'block':'none';}
+function setRT(tab,el){curResTab=tab;document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));el.classList.add('active');document.getElementById('r-insights').style.display=tab==='insights'?'block':'none';document.getElementById('r-playbook').style.display=tab==='playbook'?'block':'none';document.getElementById('r-watchlist').style.display=tab==='watchlist'?'block':'none';const rfab=document.getElementById('rfab');if(rfab)rfab.style.display=tab==='playbook'?'block':'none';}
 function rfabClick(){if(curResTab==='playbook')openNewPr();}
-function renderResearch(){renderInsights();renderPlaybook();}
+function renderResearch(){renderInsights();renderPlaybook();renderWatchlist();}
 function renderInsights(){
   const HIST=[{cat:'CRITICAL',color:'var(--red)',title:'Averaging Down = #1 Loss Driver',body:'31% of trades involved averaging down — 27% win rate, Rs.-92,389 loss. Single-entry trades: 58% win rate. Averaging down is not a strategy — it is hope disguised as a trade.'},{cat:'CRITICAL',color:'var(--red)',title:'Expired Options = 100% of Net Loss',body:'27 trades expired worthless costing Rs.-1,13,148. Total loss is Rs.-1,11,403. Your actively managed trades are slightly profitable. Exit discipline is the only problem.'},{cat:'CRITICAL',color:'var(--red)',title:'Risk:Reward is Structurally Broken',body:'Avg win Rs.763. Avg loss Rs.-2,552. Losses are 3.3x wins. Need 77% win rate to break even — running at 48%. Cut losses faster or hold winners longer.'},{cat:'WARNING',color:'var(--amber)',title:'Holding Beyond 1 Hour Destroys Profits',body:'Under 60 min: 68% WR, Rs.+20,893 profit. Over 1 hour: Rs.-16,917 loss. Your edge exists only in short timeframes.'},{cat:'WARNING',color:'var(--amber)',title:'Cheap Options Are a Trap',body:'Options below Rs.20: 37% WR, Rs.-14,241 loss. Above Rs.60: 57% WR. Cheap OTM options expire far more often.'},{cat:'PATTERN',color:'var(--cyan)',title:'Short-Term Trades Are Profitable',body:'Trades exited within 60 min: Rs.+20,893 profit at 68% WR. If every trade was exited within 60 min you would be profitable for the year.'},{cat:'PATTERN',color:'var(--cyan)',title:'Direction Reading is Sound',body:'CE 48.7% WR, PE 47.7% WR. You read the market correctly. Execution and management need the work, not direction.'},{cat:'POSITIVE',color:'var(--green)',title:'Feb 2026 — Revenge Trading Pattern',body:'Feb 2026: 26 trades, Rs.-46,924 loss — 42% of annual losses in one month. One bad trade triggered aggressive averaging down. You must have a monthly loss limit.'}];
   const cm={CRITICAL:'crit',WARNING:'warn',PATTERN:'pat',POSITIVE:'pos'};
@@ -1980,6 +2028,23 @@ function exportObsidian(){
       });
     });
   }
+  if(watchItems.length){
+    md+='\n## Watchlist\n';
+    var wByType={};
+    watchItems.forEach(function(w){(wByType[w.type]=wByType[w.type]||[]).push(w);});
+    WATCH_TYPES.forEach(function(ty){
+      var list=wByType[ty];if(!list||!list.length)return;
+      list=list.slice().sort(function(a,b){return new Date(b.addedDate)-new Date(a.addedDate);});
+      md+='\n### '+ty.toUpperCase()+'\n';
+      list.forEach(function(w){
+        var line='- **'+w.symbol+'**';
+        if(w.tag)line+=' ['+w.tag+']';
+        if(w.note)line+=' — '+w.note;
+        line+=' _('+w.status+')_';
+        md+=line+'\n';
+      });
+    });
+  }
   md+='\n#trading #nifty #journal\n';
   try{navigator.clipboard.writeText(md).then(function(){showToast('Obsidian markdown copied','var(--cyan)');});}
   catch(e){var el=document.createElement('textarea');el.value=md;el.style.cssText='position:fixed;opacity:0;top:0;left:0';document.body.appendChild(el);el.select();document.execCommand('copy');el.remove();showToast('Copied to clipboard','var(--cyan)');}
@@ -2088,7 +2153,7 @@ var SpeechRecognitionImpl=window.SpeechRecognition||window.webkitSpeechRecogniti
 var voiceState={};
 function initVoiceButtons(){
   if(!SpeechRecognitionImpl)return;
-  ['cap-text','ev-note'].forEach(function(id){
+  ['cap-text','ev-note','wt-note'].forEach(function(id){
     var btn=document.getElementById(id+'-mic');
     if(btn)btn.style.display='flex';
   });
@@ -2175,7 +2240,11 @@ function openCaptureModal(){
   document.getElementById('ev-phase').value=curEventPhase();
   setEvType('price_action',document.querySelector('#ev-type-row .dtcbtn'));
   setEvStatus('observed',document.querySelector('#ev-status-row .dtcbtn'));
-  if(typeof showVoiceMsg==='function'){showVoiceMsg('cap-text','');showVoiceMsg('ev-note','');}
+  document.getElementById('wt-sym').value='';
+  document.getElementById('wt-note').value='';
+  document.getElementById('wt-tag').value='';
+  setWatchType('FNO Focus',document.querySelector('#wt-type-row .dtcbtn'));
+  if(typeof showVoiceMsg==='function'){showVoiceMsg('cap-text','');showVoiceMsg('ev-note','');showVoiceMsg('wt-note','');}
   openM('m-capture');
   setTimeout(function(){var el=document.getElementById('cap-text');el.style.height='auto';el.focus();},250);
 }
@@ -2183,11 +2252,14 @@ function setCapMode(mode){
   capMode=mode;
   document.getElementById('cap-mode-btn-capture').classList.toggle('active',mode==='capture');
   document.getElementById('cap-mode-btn-event').classList.toggle('active',mode==='event');
+  document.getElementById('cap-mode-btn-watch').classList.toggle('active',mode==='watch');
   document.getElementById('cap-body-capture').style.display=mode==='capture'?'':'none';
   document.getElementById('cap-body-event').style.display=mode==='event'?'':'none';
+  document.getElementById('cap-body-watch').style.display=mode==='watch'?'':'none';
 }
 function saveCapture(){
   if(capMode==='event'){saveEvent();return;}
+  if(capMode==='watch'){saveWatchEntry();return;}
   var text=document.getElementById('cap-text').value.trim();if(!text)return;
   captures.unshift({id:gid(),text:text,timestamp:Date.now(),status:'unprocessed'});
   saveCaptures();closeM('m-capture');renderCaptureBadge();
@@ -2426,6 +2498,148 @@ function renderEventFeed(date){
   return html;
 }
 
+// ── SYMBOL WATCHLIST (obt_watchlist) ────────────────────────────────
+var watchItems=[];
+var watchType='FNO Focus';
+var wteType='FNO Focus';
+var watchFilter='ALL';
+var editWatchId=null;
+var pendingWatchConvert=null;
+var WATCH_TYPES=['FNO Focus','New Swing Entry','New Scalp Entry','Long Term Stocks','Growth Stocks'];
+var WATCH_TYPE_META={
+  'FNO Focus':{color:'var(--cyan)'},
+  'New Swing Entry':{color:'var(--purple)'},
+  'New Scalp Entry':{color:'var(--amber)'},
+  'Long Term Stocks':{color:'var(--green)'},
+  'Growth Stocks':{color:'var(--red)'}
+};
+var WATCH_TAGS={
+  'FNO Focus':['Weekly Expiry','Rollover','OI Buildup','IV Spike','Support Test','Resistance Test'],
+  'New Swing Entry':['Breakout','Pullback','Trendline Bounce','Base Breakout','Earnings Play'],
+  'New Scalp Entry':['Gap Fill','Opening Range','VWAP Bounce','News Spike'],
+  'Long Term Stocks':['Value Buy','Turnaround','Sector Leader','Dividend Play'],
+  'Growth Stocks':['High Growth','Momentum','Sector Rotation','Story Stock']
+};
+function loadWatchItems(){try{watchItems=JSON.parse(localStorage.getItem('obt_watchlist')||'[]');}catch(e){watchItems=[];}if(!Array.isArray(watchItems))watchItems=[];}
+function saveWatchItems(){localStorage.setItem('obt_watchlist',JSON.stringify(watchItems));}
+function setWatchType(type,el){
+  watchType=type;
+  document.querySelectorAll('#wt-type-row .dtcbtn').forEach(function(b){b.classList.remove('on');});
+  el.classList.add('on');
+  updateWatchTagOptions('wt-tag-list',type);
+}
+function setWteType(type,el){
+  wteType=type;
+  document.querySelectorAll('#wte-type-row .dtcbtn').forEach(function(b){b.classList.remove('on');});
+  el.classList.add('on');
+  updateWatchTagOptions('wte-tag-list',type);
+}
+function updateWatchTagOptions(dlId,type){
+  var dl=document.getElementById(dlId);if(!dl)return;
+  dl.innerHTML=(WATCH_TAGS[type]||[]).map(function(t){return'<option value="'+t+'">';}).join('');
+}
+function saveWatchEntry(){
+  var sym=document.getElementById('wt-sym').value.trim().toUpperCase();
+  if(!sym){showToast('Add a symbol first','var(--red)');return;}
+  var note=document.getElementById('wt-note').value.trim();
+  var tag=document.getElementById('wt-tag').value.trim();
+  watchItems.unshift({id:gid(),symbol:sym,type:watchType,note:note,tag:tag||null,status:'watching',addedDate:new Date().toISOString(),linkedTradeId:null});
+  saveWatchItems();closeM('m-capture');
+  if(document.getElementById('screen-research').classList.contains('active'))renderWatchlist();
+  showToast('Added to watchlist','var(--purple)');
+}
+function setWatchFilter(type){watchFilter=type;renderWatchlist();}
+function renderWatchlist(){
+  var el=document.getElementById('r-watchlist');if(!el)return;
+  var chipsHtml='<div class="mkt-chip'+(watchFilter==='ALL'?' active':'')+'" onclick="setWatchFilter(\'ALL\')">All</div>'
+    +WATCH_TYPES.map(function(ty){return'<div class="mkt-chip'+(watchFilter===ty?' active':'')+'" onclick="setWatchFilter(\''+ty+'\')">'+escapeHtml(ty)+'</div>';}).join('');
+  var scoped=watchItems.filter(function(w){return watchFilter==='ALL'||w.type===watchFilter;});
+  var activeList=scoped.filter(function(w){return w.status!=='dropped';}).sort(function(a,b){return new Date(b.addedDate)-new Date(a.addedDate);});
+  var droppedList=scoped.filter(function(w){return w.status==='dropped';}).sort(function(a,b){return new Date(b.addedDate)-new Date(a.addedDate);});
+  var listHtml=activeList.length?activeList.map(renderWatchCard).join(''):'<div class="empty"><div class="empty-icon">&#128065;</div><div class="empty-title">No watchlist items</div><div class="empty-sub">Use the pencil icon and pick Watch to track a symbol.</div></div>';
+  var droppedHtml=droppedList.length?('<div class="wdrop-toggle" onclick="toggleDroppedWatch()"><span id="wdrop-caret">&#9656;</span> DROPPED ('+droppedList.length+')</div><div id="wdrop-list" style="display:none">'+droppedList.map(renderWatchCard).join('')+'</div>'):'';
+  el.innerHTML='<div class="chip-group" style="padding:0 18px 12px">'+chipsHtml+'</div><div style="padding:0 18px">'+listHtml+droppedHtml+'</div>';
+}
+function toggleDroppedWatch(){
+  var l=document.getElementById('wdrop-list');if(!l)return;
+  var open=l.style.display==='block';
+  l.style.display=open?'none':'block';
+  var caret=document.getElementById('wdrop-caret');if(caret)caret.innerHTML=open?'&#9656;':'&#9662;';
+}
+function renderWatchCard(w){
+  var meta=WATCH_TYPE_META[w.type]||{color:'var(--muted2)'};
+  var typeTag='<span class="ev-feed-tag" style="color:'+meta.color+'">'+escapeHtml(w.type)+'</span>';
+  var tagTag=w.tag?'<span class="ev-feed-tag">'+escapeHtml(w.tag)+'</span>':'';
+  var statusColor=w.status==='acted'?'var(--green)':w.status==='dropped'?'var(--muted2)':'var(--cyan)';
+  var actions='';
+  if(w.status==='watching'){
+    actions='<button class="cap-act-convert" onclick="markWatchActed('+w.id+')">Mark Acted</button>'
+      +'<button class="cap-act-archive" onclick="openWatchEdit('+w.id+')">Edit</button>'
+      +'<button class="cap-act-delete" onclick="dropWatch('+w.id+')">Drop</button>';
+  }else if(w.status==='acted'){
+    actions='<button class="cap-act-cyan" onclick="convertWatchToTrade('+w.id+')">Convert to Trade</button>'
+      +'<button class="cap-act-archive" onclick="openWatchEdit('+w.id+')">Edit</button>'
+      +'<button class="cap-act-delete" onclick="dropWatch('+w.id+')">Drop</button>';
+  }else{
+    actions='<button class="cap-act-convert" onclick="restoreWatch('+w.id+')">Restore</button>';
+  }
+  return'<div class="cap-item" onclick="toggleWatchActions('+w.id+')">'
+    +'<div class="cap-item-row">'+typeTag+tagTag+'<span class="cap-text-line" style="font-weight:700">'+escapeHtml(w.symbol)+'</span></div>'
+    +(w.note?'<div class="cap-text-line" style="margin-top:4px;color:var(--muted2)">'+escapeHtml(w.note)+'</div>':'')
+    +'<div class="cap-time">'+timeAgo(new Date(w.addedDate).getTime())+' &middot; <span style="color:'+statusColor+'">'+w.status.toUpperCase()+'</span>'+(w.linkedTradeId?' &middot; Linked':'')+'</div>'
+    +'<div class="cap-actions" id="watch-actions-'+w.id+'" style="display:none" onclick="event.stopPropagation()">'+actions+'</div>'
+    +'</div>';
+}
+function toggleWatchActions(id){
+  var el=document.getElementById('watch-actions-'+id);if(!el)return;
+  var open=el.style.display==='flex';
+  document.querySelectorAll('.cap-actions').forEach(function(a){a.style.display='none';});
+  el.style.display=open?'none':'flex';
+}
+function markWatchActed(id){var w=watchItems.find(function(x){return x.id===id;});if(!w)return;w.status='acted';saveWatchItems();renderWatchlist();showToast('Marked as acted','var(--green)');}
+function dropWatch(id){var w=watchItems.find(function(x){return x.id===id;});if(!w)return;w.status='dropped';saveWatchItems();renderWatchlist();showToast('Dropped from watchlist','var(--muted2)');}
+function restoreWatch(id){var w=watchItems.find(function(x){return x.id===id;});if(!w)return;w.status='watching';saveWatchItems();renderWatchlist();showToast('Restored to watching','var(--cyan)');}
+function openWatchEdit(id){
+  var w=watchItems.find(function(x){return x.id===id;});if(!w)return;
+  editWatchId=id;
+  document.getElementById('wte-sym-label').textContent=w.symbol;
+  document.getElementById('wte-note').value=w.note||'';
+  document.getElementById('wte-tag').value=w.tag||'';
+  wteType=w.type;
+  updateWatchTagOptions('wte-tag-list',w.type);
+  document.querySelectorAll('#wte-type-row .dtcbtn').forEach(function(b){b.classList.remove('on');});
+  var idx=WATCH_TYPES.indexOf(w.type);
+  var btn=document.querySelectorAll('#wte-type-row .dtcbtn')[idx>=0?idx:0];
+  if(btn)btn.classList.add('on');
+  openM('m-watch-edit');
+}
+function saveWatchEdit(){
+  var w=watchItems.find(function(x){return x.id===editWatchId;});if(!w)return;
+  w.note=document.getElementById('wte-note').value.trim();
+  w.tag=document.getElementById('wte-tag').value.trim()||null;
+  w.type=wteType;
+  saveWatchItems();closeM('m-watch-edit');renderWatchlist();showToast('Watchlist item updated','var(--cyan)');
+}
+function convertWatchToTrade(id){
+  var w=watchItems.find(function(x){return x.id===id;});if(!w)return;
+  pendingWatchConvert={symbol:w.symbol,watchId:id,ts:Date.now()};
+  if(w.type==='New Scalp Entry'){ntTradeType='Non-F&O Stock — Scalp';ntShape='scalp';openScalpNew();}
+  else if(w.type==='Long Term Stocks'){ntTradeType='Long-Term / Multibagger';ntShape='longterm';openLongtermNew();}
+  else{openNewTrade();}
+}
+function getPendingWatchConvert(){
+  if(!pendingWatchConvert)return null;
+  if(Date.now()-pendingWatchConvert.ts>300000){pendingWatchConvert=null;return null;}
+  return pendingWatchConvert;
+}
+function linkPendingWatchToTrade(tradeId){
+  var pwc=getPendingWatchConvert();if(!pwc)return;
+  var w=watchItems.find(function(x){return x.id===pwc.watchId;});
+  if(w)w.linkedTradeId=tradeId;
+  saveWatchItems();
+  pendingWatchConvert=null;
+}
+
 function streamColor(id){var s=STREAMS.find(function(x){return x.id===id;});return s?s.color:'var(--muted2)';}
 function streamLabel(id){var s=STREAMS.find(function(x){return x.id===id;});return s?s.label:id;}
 
@@ -2609,6 +2823,7 @@ load();
 loadTasks();
 loadCaptures();
 loadEvents();
+loadWatchItems();
 try{const b=JSON.parse(localStorage.getItem('tj_autobackup')||'null');const ls=parseInt(localStorage.getItem('tj_lastsync')||'0');if(b&&b.savedAt&&b.savedAt>ls&&Array.isArray(b.trades)&&b.trades.length>=trades.length){trades=b.trades;principles=b.principles||[];sessions=b.sessions||[];alerts=b.alerts||[];plans=b.plans||[];}}catch(e){}
 seedCurriculum();
 updateAlertBell();
