@@ -220,8 +220,9 @@ input:checked+.tslider:before{transform:translateX(18px)}
 .field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--green)}
 .field select option{background:var(--surface)}
 .field textarea{resize:vertical;min-height:75px;line-height:1.5}
-.field textarea.has-mic{padding-right:38px}
+.has-mic{padding-right:36px}
 .mic-btn{position:absolute;right:5px;bottom:5px;width:26px;height:26px;border-radius:50%;background:var(--card2);border:1px solid var(--border2);color:var(--muted2);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:background 0.15s,color 0.15s,border-color 0.15s}
+.mic-btn.inline{bottom:auto;top:50%;transform:translateY(-50%);width:22px;height:22px}
 .mic-btn.listening{background:var(--red);border-color:var(--red);color:#fff;animation:micPulse 1.2s infinite}
 @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(244,63,94,0.45)}50%{box-shadow:0 0 0 7px rgba(244,63,94,0)}}
 .voice-msg{font-size:10px;color:var(--red);margin:5px 0 0;display:none}
@@ -766,11 +767,7 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
     </div>
     <div id="cap-body-capture">
       <div class="field">
-        <div style="position:relative">
-          <textarea id="cap-text" class="has-mic" rows="1" placeholder="Jot it down..." oninput="autoGrowCapture(this)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();saveCapture();}"></textarea>
-          <button type="button" class="mic-btn" id="cap-text-mic" style="display:none" title="Voice input" onclick="toggleVoice('cap-text')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
-        </div>
-        <div class="voice-msg" id="cap-text-voice-msg"></div>
+        <textarea id="cap-text" rows="1" placeholder="Jot it down..." oninput="autoGrowCapture(this)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();saveCapture();}"></textarea>
       </div>
     </div>
     <div id="cap-body-event" style="display:none">
@@ -782,11 +779,7 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
       </div></div>
       <div class="field">
         <label>NOTE</label>
-        <div style="position:relative">
-          <textarea id="ev-note" class="has-mic" rows="2" placeholder="What are you seeing?"></textarea>
-          <button type="button" class="mic-btn" id="ev-note-mic" style="display:none" title="Voice input" onclick="toggleVoice('ev-note')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
-        </div>
-        <div class="voice-msg" id="ev-note-voice-msg"></div>
+        <textarea id="ev-note" rows="2" placeholder="What are you seeing?"></textarea>
       </div>
       <div class="field"><label>TAG (optional)</label><input type="text" id="ev-tag" list="ev-tag-list" placeholder="e.g. PDH Break"><datalist id="ev-tag-list"></datalist></div>
       <div class="field"><label>STATUS</label><div class="dtcbtn-row" id="ev-status-row">
@@ -806,11 +799,7 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
       </div></div>
       <div class="field">
         <label>NOTE</label>
-        <div style="position:relative">
-          <textarea id="wt-note" class="has-mic" rows="2" placeholder="Why watching / level to act at..."></textarea>
-          <button type="button" class="mic-btn" id="wt-note-mic" style="display:none" title="Voice input" onclick="toggleVoice('wt-note')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
-        </div>
-        <div class="voice-msg" id="wt-note-voice-msg"></div>
+        <textarea id="wt-note" rows="2" placeholder="Why watching / level to act at..."></textarea>
       </div>
       <div class="field"><label>TAG (optional)</label><input type="text" id="wt-tag" list="wt-tag-list" placeholder="e.g. Breakout"><datalist id="wt-tag-list"></datalist></div>
     </div>
@@ -925,12 +914,13 @@ function updateSync(){const ts=localStorage.getItem('tj_lastsync');const el=docu
 function syncNow(){save();const d=document.getElementById('conn-dot');d.style.background='var(--cyan)';setTimeout(()=>d.style.background='var(--green)',1000);}
 function gid(){return Date.now()+Math.floor(Math.random()*9999);}
 function openM(id){document.getElementById(id).style.display='flex';document.body.style.overflow='hidden';}
-function closeM(id){document.getElementById(id).style.display='none';document.body.style.overflow='';if(id==='m-capture'&&typeof stopAllVoice==='function')stopAllVoice();}
+function closeM(id){document.getElementById(id).style.display='none';document.body.style.overflow='';if(typeof stopAllVoice==='function')stopAllVoice();}
 
 // NAV
 let curScreen='today';
 function showScreen(n){
   if(n==='decision'&&!selTrade)return;
+  if(typeof stopAllVoice==='function')stopAllVoice();
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('screen-'+n).classList.add('active');
@@ -2148,90 +2138,123 @@ function timeAgo(ts){
 }
 function autoGrowCapture(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,160)+'px';}
 
-// ── VOICE INPUT (Web Speech API, capture sheet only) ────────────────
+// ── VOICE INPUT (Web Speech API) ─────────────────────────────────────
+// Generic mic attachment: attachVoiceInput(el) wires up any <input type="text">
+// or <textarea> with a mic button. autoWireVoiceInputs() + the MutationObserver
+// below apply it to every matching field, present now or added later, so no
+// individual field needs to call this directly.
 var SpeechRecognitionImpl=window.SpeechRecognition||window.webkitSpeechRecognition;
-var voiceState={};
-function initVoiceButtons(){
+var voiceInstances=[];
+function stopAllVoice(){voiceInstances.forEach(function(inst){if(inst.listening)inst.recognition.stop();});}
+function showVoiceMsg(msgEl,text){
+  msgEl.textContent=text||'';
+  msgEl.style.display=text?'block':'none';
+  clearTimeout(msgEl._vt);
+  if(text)msgEl._vt=setTimeout(function(){msgEl.style.display='none';},3500);
+}
+function attachVoiceInput(inputEl){
+  if(!inputEl||inputEl._voiceAttached)return;
   if(!SpeechRecognitionImpl)return;
-  ['cap-text','ev-note','wt-note'].forEach(function(id){
-    var btn=document.getElementById(id+'-mic');
-    if(btn)btn.style.display='flex';
+  inputEl._voiceAttached=true;
+  var isTextarea=inputEl.tagName==='TEXTAREA';
+  var wrap=document.createElement('div');
+  wrap.style.position='relative';
+  inputEl.parentNode.insertBefore(wrap,inputEl);
+  wrap.appendChild(inputEl);
+  inputEl.classList.add('has-mic');
+  var micBtn=document.createElement('button');
+  micBtn.type='button';
+  micBtn.className='mic-btn'+(isTextarea?'':' inline');
+  micBtn.title='Voice input';
+  micBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+  wrap.appendChild(micBtn);
+  var msg=document.createElement('div');
+  msg.className='voice-msg';
+  wrap.parentNode.insertBefore(msg,wrap.nextSibling);
+  var inst={inputEl:inputEl,recognition:null,listening:false};
+  voiceInstances.push(inst);
+  function startRecognition(lang){
+    var recognition=new SpeechRecognitionImpl();
+    recognition.lang=lang;
+    recognition.continuous=true;
+    recognition.interimResults=true;
+    var selStart=inputEl.selectionStart!=null?inputEl.selectionStart:inputEl.value.length;
+    var selEnd=inputEl.selectionEnd!=null?inputEl.selectionEnd:inputEl.value.length;
+    var baseBefore=inputEl.value.slice(0,selStart);
+    var baseAfter=inputEl.value.slice(selEnd);
+    var sep=(baseBefore.length&&!/\s$/.test(baseBefore))?' ':'';
+    var finalText='';
+    inst.recognition=recognition;
+    inst.listening=true;
+    recognition.onstart=function(){
+      if(inst.recognition!==recognition)return;
+      micBtn.classList.add('listening');
+    };
+    recognition.onresult=function(event){
+      if(inst.recognition!==recognition)return;
+      var interim='';
+      for(var i=event.resultIndex;i<event.results.length;i++){
+        var res=event.results[i];
+        if(res.isFinal)finalText+=res[0].transcript+' ';
+        else interim+=res[0].transcript;
+      }
+      var combined=baseBefore+sep+finalText+interim;
+      inputEl.value=combined+baseAfter;
+      inputEl.selectionStart=inputEl.selectionEnd=combined.length;
+      inputEl.dispatchEvent(new Event('input',{bubbles:true}));
+    };
+    recognition.onerror=function(event){
+      if(inst.recognition!==recognition)return;
+      if(event.error==='language-not-supported'&&lang!=='en-US'){
+        startRecognition('en-US');return;
+      }
+      if(event.error==='not-allowed'||event.error==='permission-denied'||event.error==='service-not-allowed'){
+        showVoiceMsg(msg,'Mic permission denied');
+      }else if(event.error==='no-speech'){
+        showVoiceMsg(msg,'No speech detected');
+      }else if(event.error==='audio-capture'){
+        showVoiceMsg(msg,'No microphone found');
+      }else if(event.error!=='aborted'){
+        showVoiceMsg(msg,'Voice input error');
+      }
+    };
+    recognition.onend=function(){
+      if(inst.recognition!==recognition)return;
+      inst.listening=false;
+      micBtn.classList.remove('listening');
+    };
+    try{recognition.start();}catch(e){inst.listening=false;}
+  }
+  micBtn.addEventListener('click',function(e){
+    e.stopPropagation();
+    if(inst.listening){inst.recognition.stop();return;}
+    voiceInstances.forEach(function(other){if(other!==inst&&other.listening)other.recognition.stop();});
+    showVoiceMsg(msg,'');
+    startRecognition('en-IN');
   });
 }
-function showVoiceMsg(fieldId,text){
-  var el=document.getElementById(fieldId+'-voice-msg');if(!el)return;
-  el.textContent=text||'';
-  el.style.display=text?'block':'none';
-  clearTimeout(el._vt);
-  if(text)el._vt=setTimeout(function(){el.style.display='none';},3500);
-}
-function stopVoice(fieldId){
-  var st=voiceState[fieldId];
-  if(st&&st.listening)st.recognition.stop();
-}
-function stopAllVoice(){Object.keys(voiceState).forEach(stopVoice);}
-function toggleVoice(fieldId){
+function autoWireVoiceInputs(root){
   if(!SpeechRecognitionImpl)return;
-  var st=voiceState[fieldId];
-  if(st&&st.listening){st.recognition.stop();return;}
-  Object.keys(voiceState).forEach(function(k){if(k!==fieldId)stopVoice(k);});
-  showVoiceMsg(fieldId,'');
-  startVoice(fieldId,'en-IN');
+  (root||document).querySelectorAll('textarea, input[type="text"]').forEach(function(el){attachVoiceInput(el);});
 }
-function startVoice(fieldId,lang){
-  var textarea=document.getElementById(fieldId);
-  var micBtn=document.getElementById(fieldId+'-mic');
-  var recognition=new SpeechRecognitionImpl();
-  recognition.lang=lang;
-  recognition.continuous=true;
-  recognition.interimResults=true;
-  var selStart=textarea.selectionStart!=null?textarea.selectionStart:textarea.value.length;
-  var selEnd=textarea.selectionEnd!=null?textarea.selectionEnd:textarea.value.length;
-  var baseBefore=textarea.value.slice(0,selStart);
-  var baseAfter=textarea.value.slice(selEnd);
-  var sep=(baseBefore.length&&!/\s$/.test(baseBefore))?' ':'';
-  var st={recognition:recognition,listening:true,finalText:''};
-  voiceState[fieldId]=st;
-  recognition.onstart=function(){
-    if(voiceState[fieldId]!==st)return;
-    if(micBtn)micBtn.classList.add('listening');
-  };
-  recognition.onresult=function(event){
-    if(voiceState[fieldId]!==st)return;
-    var interim='';
-    for(var i=event.resultIndex;i<event.results.length;i++){
-      var res=event.results[i];
-      if(res.isFinal)st.finalText+=res[0].transcript+' ';
-      else interim+=res[0].transcript;
-    }
-    var combined=baseBefore+sep+st.finalText+interim;
-    textarea.value=combined+baseAfter;
-    textarea.selectionStart=textarea.selectionEnd=combined.length;
-    if(fieldId==='cap-text')autoGrowCapture(textarea);
-  };
-  recognition.onerror=function(event){
-    if(voiceState[fieldId]!==st)return;
-    if(event.error==='language-not-supported'&&lang!=='en-US'){
-      startVoice(fieldId,'en-US');return;
-    }
-    if(event.error==='not-allowed'||event.error==='permission-denied'||event.error==='service-not-allowed'){
-      showVoiceMsg(fieldId,'Mic permission denied');
-    }else if(event.error==='no-speech'){
-      showVoiceMsg(fieldId,'No speech detected');
-    }else if(event.error==='audio-capture'){
-      showVoiceMsg(fieldId,'No microphone found');
-    }else if(event.error!=='aborted'){
-      showVoiceMsg(fieldId,'Voice input error');
-    }
-  };
-  recognition.onend=function(){
-    if(voiceState[fieldId]!==st)return;
-    st.listening=false;
-    if(micBtn)micBtn.classList.remove('listening');
-  };
-  try{recognition.start();}catch(e){st.listening=false;}
-}
-initVoiceButtons();
+var voiceObserver=new MutationObserver(function(mutations){
+  if(!SpeechRecognitionImpl)return;
+  mutations.forEach(function(m){
+    m.addedNodes.forEach(function(node){
+      if(node.nodeType!==1)return;
+      if(node.tagName==='TEXTAREA'||(node.tagName==='INPUT'&&node.type==='text'))attachVoiceInput(node);
+      if(node.querySelectorAll)node.querySelectorAll('textarea, input[type="text"]').forEach(function(el){attachVoiceInput(el);});
+    });
+    m.removedNodes.forEach(function(node){
+      if(node.nodeType!==1)return;
+      voiceInstances.forEach(function(inst){
+        if(inst.listening&&(node===inst.inputEl||(node.contains&&node.contains(inst.inputEl))))inst.recognition.stop();
+      });
+    });
+  });
+});
+voiceObserver.observe(document.body,{childList:true,subtree:true});
+autoWireVoiceInputs(document);
 function openCaptureModal(){
   document.getElementById('cap-text').value='';
   setCapMode('capture');
@@ -2244,7 +2267,6 @@ function openCaptureModal(){
   document.getElementById('wt-note').value='';
   document.getElementById('wt-tag').value='';
   setWatchType('FNO Focus',document.querySelector('#wt-type-row .dtcbtn'));
-  if(typeof showVoiceMsg==='function'){showVoiceMsg('cap-text','');showVoiceMsg('ev-note','');showVoiceMsg('wt-note','');}
   openM('m-capture');
   setTimeout(function(){var el=document.getElementById('cap-text');el.style.height='auto';el.focus();},250);
 }
