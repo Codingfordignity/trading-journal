@@ -388,6 +388,12 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
 .dtcbtn.on.wgrowth{background:var(--rdim);border-color:var(--red);color:var(--red)}
 .cap-act-cyan{background:var(--cyan);color:#000}
 .wdrop-toggle{font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--muted2);padding:10px 2px;cursor:pointer}
+.ph-tabs{display:flex;margin:0 18px 9px;background:var(--card);border-radius:10px;padding:3px;border:1px solid var(--border);gap:2px}
+.ph-tab{flex:1;padding:6px 1px;border:none;border-radius:8px;background:none;color:var(--muted2);font-family:var(--mono);font-size:9px;letter-spacing:.5px;cursor:pointer;white-space:nowrap}
+.ph-tab.active{background:var(--pdim);color:var(--purple)}
+.ph-tab.now::after{content:'\00B7';color:var(--amber);font-weight:700}
+.ph-tab .ph-n{color:var(--purple);font-weight:700}
+.ph-tab.active .ph-n{color:var(--white)}
 .wl-chip{font-size:11px;padding:5px 9px;border-radius:15px;border:1px solid rgba(139,92,246,0.3);color:var(--white);background:var(--card);cursor:pointer}
 .wl-chip:active{background:var(--pdim)}
 .wl-strip{margin:0 18px 10px;background:var(--card);border-radius:14px;border:1px solid rgba(139,92,246,0.2);overflow:hidden}
@@ -790,13 +796,16 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
     </div>
     <div id="cap-body-watch" style="display:none">
       <div class="field"><label>SYMBOL</label><input type="text" id="wt-sym" placeholder="RELIANCE, NIFTY 24500 CE..." autocapitalize="characters"></div>
-      <div class="field"><label>TYPE</label><div class="dtcbtn-row" id="wt-type-row">
-        <div class="dtcbtn wfno on" onclick="setWatchType('FNO Focus',this)">FNO FOCUS</div>
-        <div class="dtcbtn wswing" onclick="setWatchType('New Swing Entry',this)">SWING</div>
-        <div class="dtcbtn wscalp" onclick="setWatchType('New Scalp Entry',this)">SCALP</div>
-        <div class="dtcbtn wlt" onclick="setWatchType('Long Term Stocks',this)">LONG TERM</div>
-        <div class="dtcbtn wgrowth" onclick="setWatchType('Growth Stocks',this)">GROWTH</div>
-      </div></div>
+      <div class="field"><label>TYPE</label>
+        <select id="wt-type-sel" onchange="onWatchTypePick(this,'wt')"></select>
+        <div id="wt-type-custom" style="display:none;margin-top:6px">
+          <input type="text" placeholder="Name your watch type..." onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomWatchType('wt');}">
+          <div style="display:flex;gap:6px;margin-top:6px">
+            <button class="btn-x" style="flex:1" onclick="cancelCustomWatchType('wt')">Cancel</button>
+            <button class="btn-save" style="flex:1;background:var(--purple)" onclick="addCustomWatchType('wt')">Add</button>
+          </div>
+        </div>
+      </div>
       <div class="field">
         <label>NOTE</label>
         <textarea id="wt-note" rows="2" placeholder="Why watching / level to act at..."></textarea>
@@ -829,13 +838,16 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
 <div class="overlay" id="m-watch-edit" style="display:none" onclick="if(event.target===this)closeM('m-watch-edit')">
   <div class="modal"><div class="mhandle"></div><div class="mtitle" style="color:var(--purple)">EDIT WATCHLIST ITEM</div>
     <div class="field"><label>SYMBOL</label><div id="wte-sym-label" style="font-size:13px;color:var(--white);padding:9px 11px;background:var(--card);border-radius:8px;border:1px solid var(--border2)">—</div></div>
-    <div class="field"><label>TYPE</label><div class="dtcbtn-row" id="wte-type-row">
-      <div class="dtcbtn wfno" onclick="setWteType('FNO Focus',this)">FNO FOCUS</div>
-      <div class="dtcbtn wswing" onclick="setWteType('New Swing Entry',this)">SWING</div>
-      <div class="dtcbtn wscalp" onclick="setWteType('New Scalp Entry',this)">SCALP</div>
-      <div class="dtcbtn wlt" onclick="setWteType('Long Term Stocks',this)">LONG TERM</div>
-      <div class="dtcbtn wgrowth" onclick="setWteType('Growth Stocks',this)">GROWTH</div>
-    </div></div>
+    <div class="field"><label>TYPE</label>
+      <select id="wte-type-sel" onchange="onWatchTypePick(this,'wte')"></select>
+      <div id="wte-type-custom" style="display:none;margin-top:6px">
+        <input type="text" placeholder="Name your watch type..." onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomWatchType('wte');}">
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <button class="btn-x" style="flex:1" onclick="cancelCustomWatchType('wte')">Cancel</button>
+          <button class="btn-save" style="flex:1;background:var(--purple)" onclick="addCustomWatchType('wte')">Add</button>
+        </div>
+      </div>
+    </div>
     <div class="field"><label>NOTE</label><textarea id="wte-note" placeholder="Why watching / level to act at..."></textarea></div>
     <div class="field"><label>TAG (optional)</label><input type="text" id="wte-tag" list="wte-tag-list" placeholder="e.g. Breakout"><datalist id="wte-tag-list"></datalist></div>
     <div class="macts"><button class="btn-x" onclick="closeM('m-watch-edit')">Cancel</button><button class="btn-save" onclick="saveWatchEdit()">Save</button></div>
@@ -2001,7 +2013,7 @@ function exportObsidian(){
   var todEvents=events.filter(function(e){return eventDateStr(e)===date;});
   if(todEvents.length){
     md+='\n## Events\n';
-    var evPhases=['pre-market','opening','early-session','mid-session','post-market'];
+    var evPhases=SESSION_PHASES;
     var evByPhase={};
     todEvents.forEach(function(e){(evByPhase[e.sessionPhase]=evByPhase[e.sessionPhase]||[]).push(e);});
     evPhases.forEach(function(ph){
@@ -2022,7 +2034,7 @@ function exportObsidian(){
     md+='\n## Watchlist\n';
     var wByType={};
     watchItems.forEach(function(w){(wByType[w.type]=wByType[w.type]||[]).push(w);});
-    WATCH_TYPES.forEach(function(ty){
+    watchFilterTypes().forEach(function(ty){
       var list=wByType[ty];if(!list||!list.length)return;
       list=list.slice().sort(function(a,b){return new Date(b.addedDate)-new Date(a.addedDate);});
       md+='\n### '+ty.toUpperCase()+'\n';
@@ -2266,7 +2278,9 @@ function openCaptureModal(){
   document.getElementById('wt-sym').value='';
   document.getElementById('wt-note').value='';
   document.getElementById('wt-tag').value='';
-  setWatchType('FNO Focus',document.querySelector('#wt-type-row .dtcbtn'));
+  var wtCustom=document.getElementById('wt-type-custom');if(wtCustom)wtCustom.style.display='none';
+  fillWatchTypeSelect('wt-type-sel','FNO Focus');
+  setWatchType('FNO Focus');
   openM('m-capture');
   setTimeout(function(){var el=document.getElementById('cap-text');el.style.height='auto';el.focus();},250);
 }
@@ -2357,6 +2371,24 @@ var WATCHLIST_TEMPLATES=[
   {label:'3rd Push',type:'wave_pattern',tag:'3rd Push'},
   {label:'Momentum Divergence',type:'indicator',tag:'Momentum Divergence'}
 ];
+var customEventTypes=[];
+function loadCustomEventTypes(){
+  try{customEventTypes=JSON.parse(localStorage.getItem('obt_custom_event_types')||'[]');}catch(e){customEventTypes=[];}
+  if(!Array.isArray(customEventTypes))customEventTypes=[];
+  customEventTypes=customEventTypes.filter(function(x){return typeof x==='string'&&x.trim();});
+}
+function saveCustomEventTypes(){localStorage.setItem('obt_custom_event_types',JSON.stringify(customEventTypes));}
+function allEventTemplates(){
+  return WATCHLIST_TEMPLATES.concat(customEventTypes.map(function(l){return{label:l,type:'price_action',tag:l};}));
+}
+var SESSION_PHASES=['pre-market','opening','early-session','mid-session','post-market'];
+var PHASE_SHORT={'pre-market':'PRE','opening':'OPEN','early-session':'EARLY','mid-session':'MID','post-market':'POST'};
+// null = follow the clock; set by the Today tab's phase tabs to pin a different phase.
+var todayPhaseView=null;
+function activeTodayPhase(){
+  return SESSION_PHASES.indexOf(todayPhaseView)>=0?todayPhaseView:curEventPhase();
+}
+function setTodayPhase(ph){todayPhaseView=ph;renderToday();}
 function curEventPhase(){
   var m=new Date().getHours()*60+new Date().getMinutes();
   if(m<9*60+15)return'pre-market';
@@ -2468,12 +2500,46 @@ function addWatchlistTemplate(label,type,tag){
   saveEvents();renderToday();showToast('Added to watchlist','var(--purple)');
 }
 function getEventWatchlistCard(){
-  var chips=WATCHLIST_TEMPLATES.map(function(t){
-    return'<div class="wl-chip" onclick="addWatchlistTemplate('+"'"+t.label+"'"+','+"'"+t.type+"'"+','+"'"+t.tag+"'"+')">'+t.label+'</div>';
+  var opts=allEventTemplates().map(function(t,i){
+    return'<option value="'+i+'">'+escapeHtml(t.label)+'</option>';
   }).join('');
   return'<div class="pm-card" style="border-color:rgba(139,92,246,0.2)">'
     +'<div class="pm-head" style="background:var(--pdim)"><span class="pm-title" style="color:var(--purple)">EVENT WATCHLIST</span></div>'
-    +'<div class="pm-body"><div class="chip-group">'+chips+'</div></div></div>';
+    +'<div class="pm-body"><div class="field" style="margin:0">'
+    +'<select id="ev-tpl-select" onchange="onEventTemplatePick(this)">'
+    +'<option value="">Add an anticipated event...</option>'+opts
+    +'<option value="__custom__">+ Add custom...</option></select>'
+    +'<div id="ev-tpl-custom" style="display:none;margin-top:6px">'
+    +'<input type="text" id="ev-tpl-custom-input" placeholder="Name your event type..." onkeydown="if(event.key===\'Enter\'){event.preventDefault();addCustomEventType();}">'
+    +'<div style="display:flex;gap:6px;margin-top:6px">'
+    +'<button class="btn-x" style="flex:1" onclick="cancelCustomEventType()">Cancel</button>'
+    +'<button class="btn-save" style="flex:1;background:var(--purple)" onclick="addCustomEventType()">Add</button>'
+    +'</div></div></div></div></div>';
+}
+function onEventTemplatePick(sel){
+  var v=sel.value;
+  var box=document.getElementById('ev-tpl-custom');
+  if(v==='__custom__'){
+    if(box){box.style.display='block';var inp=document.getElementById('ev-tpl-custom-input');if(inp){inp.value='';inp.focus();}}
+    return;
+  }
+  if(box)box.style.display='none';
+  if(v==='')return;
+  var t=allEventTemplates()[parseInt(v,10)];
+  sel.value='';
+  if(t)addWatchlistTemplate(t.label,t.type,t.tag);
+}
+function cancelCustomEventType(){
+  var box=document.getElementById('ev-tpl-custom');if(box)box.style.display='none';
+  var sel=document.getElementById('ev-tpl-select');if(sel)sel.value='';
+}
+function addCustomEventType(){
+  var inp=document.getElementById('ev-tpl-custom-input');if(!inp)return;
+  var label=inp.value.trim();
+  if(!label){showToast('Type a name first','var(--red)');return;}
+  var exists=allEventTemplates().some(function(t){return t.label.toLowerCase()===label.toLowerCase();});
+  if(!exists){customEventTypes.push(label);saveCustomEventTypes();}
+  addWatchlistTemplate(label,'price_action',label);
 }
 function renderWatchlistStrip(date){
   var wl=watchlistEventsToday();
@@ -2497,12 +2563,25 @@ function renderWatchlistStrip(date){
 function renderEventFeed(date){
   var todEvents=events.filter(function(e){return eventDateStr(e)===date;});
   if(!todEvents.length)return'';
-  var phases=['pre-market','opening','early-session','mid-session','post-market'];
   var byPhase={};
   todEvents.forEach(function(e){(byPhase[e.sessionPhase]=byPhase[e.sessionPhase]||[]).push(e);});
-  var html='<div style="padding:12px 18px 7px"><div style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--muted2)">EVENT LOG</div></div>';
-  phases.forEach(function(ph){
-    var list=byPhase[ph];if(!list||!list.length)return;
+  var sel=activeTodayPhase();
+  var now=curEventPhase();
+  var tabs=SESSION_PHASES.map(function(ph){
+    var n=(byPhase[ph]||[]).length;
+    return'<button class="ph-tab'+(ph===sel?' active':'')+(ph===now?' now':'')+'" onclick="setTodayPhase(\''+ph+'\')">'
+      +PHASE_SHORT[ph]+(n?' <span class="ph-n">'+n+'</span>':'')+'</button>';
+  }).join('');
+  var html='<div style="padding:12px 18px 7px;display:flex;align-items:center;justify-content:space-between">'
+    +'<div style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--muted2)">EVENT LOG</div>'
+    +'<div style="font-family:var(--mono);font-size:9px;color:var(--muted2)">'+sel.toUpperCase().replace('-',' ')+(sel===now?' &middot; NOW':'')+'</div></div>'
+    +'<div class="ph-tabs">'+tabs+'</div>';
+  [sel].forEach(function(ph){
+    var list=byPhase[ph];
+    if(!list||!list.length){
+      html+='<div style="margin:0 18px 10px;background:var(--card);border-radius:12px;border:1px solid var(--border);padding:14px 13px;text-align:center;font-size:11px;color:var(--muted2)">No events logged in '+ph.replace('-',' ')+' yet.</div>';
+      return;
+    }
     list=list.slice().sort(function(a,b){return a.timestamp-b.timestamp;});
     html+='<div style="margin:0 18px 10px;background:var(--card);border-radius:12px;border:1px solid var(--border);padding:10px 13px">';
     html+='<div style="font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--muted2);margin-bottom:7px">'+ph.toUpperCase().replace('-',' ')+'</div>';
@@ -2542,18 +2621,60 @@ var WATCH_TAGS={
   'Long Term Stocks':['Value Buy','Turnaround','Sector Leader','Dividend Play'],
   'Growth Stocks':['High Growth','Momentum','Sector Rotation','Story Stock']
 };
+var customWatchTypes=[];
+function loadCustomWatchTypes(){
+  try{customWatchTypes=JSON.parse(localStorage.getItem('obt_custom_watch_types')||'[]');}catch(e){customWatchTypes=[];}
+  if(!Array.isArray(customWatchTypes))customWatchTypes=[];
+  customWatchTypes=customWatchTypes.filter(function(x){return typeof x==='string'&&x.trim()&&WATCH_TYPES.indexOf(x)<0;});
+}
+function saveCustomWatchTypes(){localStorage.setItem('obt_custom_watch_types',JSON.stringify(customWatchTypes));}
+function allWatchTypes(){return WATCH_TYPES.concat(customWatchTypes);}
 function loadWatchItems(){try{watchItems=JSON.parse(localStorage.getItem('obt_watchlist')||'[]');}catch(e){watchItems=[];}if(!Array.isArray(watchItems))watchItems=[];}
 function saveWatchItems(){localStorage.setItem('obt_watchlist',JSON.stringify(watchItems));}
-function setWatchType(type,el){
+// Fills a watch-type <select> with all known types plus the "+ Add custom..." sentinel.
+function fillWatchTypeSelect(selId,selected){
+  var sel=document.getElementById(selId);if(!sel)return;
+  sel.innerHTML=allWatchTypes().map(function(ty){
+    return'<option value="'+escapeHtml(ty)+'"'+(ty===selected?' selected':'')+'>'+escapeHtml(ty)+'</option>';
+  }).join('')+'<option value="__custom__">+ Add custom...</option>';
+  if(selected&&allWatchTypes().indexOf(selected)<0)sel.value=allWatchTypes()[0];
+}
+function onWatchTypePick(sel,which){
+  var box=document.getElementById(which==='wte'?'wte-type-custom':'wt-type-custom');
+  if(sel.value==='__custom__'){
+    if(box){box.style.display='block';var inp=box.querySelector('input');if(inp){inp.value='';inp.focus();}}
+    return;
+  }
+  if(box)box.style.display='none';
+  if(which==='wte')setWteType(sel.value);else setWatchType(sel.value);
+}
+function cancelCustomWatchType(which){
+  var box=document.getElementById(which==='wte'?'wte-type-custom':'wt-type-custom');
+  if(box)box.style.display='none';
+  var sel=document.getElementById(which==='wte'?'wte-type-sel':'wt-type-sel');
+  if(sel)sel.value=which==='wte'?wteType:watchType;
+}
+function addCustomWatchType(which){
+  var box=document.getElementById(which==='wte'?'wte-type-custom':'wt-type-custom');if(!box)return;
+  var inp=box.querySelector('input');if(!inp)return;
+  var label=inp.value.trim();
+  if(!label){showToast('Type a name first','var(--red)');return;}
+  var match=allWatchTypes().filter(function(t){return t.toLowerCase()===label.toLowerCase();})[0];
+  if(match){label=match;}
+  else{customWatchTypes.push(label);saveCustomWatchTypes();}
+  box.style.display='none';
+  if(which==='wte'){fillWatchTypeSelect('wte-type-sel',label);setWteType(label);}
+  else{fillWatchTypeSelect('wt-type-sel',label);setWatchType(label);}
+  if(document.getElementById('screen-research').classList.contains('active'))renderWatchlist();
+}
+function setWatchType(type){
   watchType=type;
-  document.querySelectorAll('#wt-type-row .dtcbtn').forEach(function(b){b.classList.remove('on');});
-  el.classList.add('on');
+  var sel=document.getElementById('wt-type-sel');if(sel&&sel.value!==type)sel.value=type;
   updateWatchTagOptions('wt-tag-list',type);
 }
-function setWteType(type,el){
+function setWteType(type){
   wteType=type;
-  document.querySelectorAll('#wte-type-row .dtcbtn').forEach(function(b){b.classList.remove('on');});
-  el.classList.add('on');
+  var sel=document.getElementById('wte-type-sel');if(sel&&sel.value!==type)sel.value=type;
   updateWatchTagOptions('wte-tag-list',type);
 }
 function updateWatchTagOptions(dlId,type){
@@ -2570,11 +2691,17 @@ function saveWatchEntry(){
   if(document.getElementById('screen-research').classList.contains('active'))renderWatchlist();
   showToast('Added to watchlist','var(--purple)');
 }
+// Known types first, then any type only present on existing items (imported/orphaned).
+function watchFilterTypes(){
+  var out=allWatchTypes().slice();
+  watchItems.forEach(function(w){if(w.type&&out.indexOf(w.type)<0)out.push(w.type);});
+  return out;
+}
 function setWatchFilter(type){watchFilter=type;renderWatchlist();}
 function renderWatchlist(){
   var el=document.getElementById('r-watchlist');if(!el)return;
   var chipsHtml='<div class="mkt-chip'+(watchFilter==='ALL'?' active':'')+'" onclick="setWatchFilter(\'ALL\')">All</div>'
-    +WATCH_TYPES.map(function(ty){return'<div class="mkt-chip'+(watchFilter===ty?' active':'')+'" onclick="setWatchFilter(\''+ty+'\')">'+escapeHtml(ty)+'</div>';}).join('');
+    +watchFilterTypes().map(function(ty){return'<div class="mkt-chip'+(watchFilter===ty?' active':'')+'" onclick="setWatchFilter('+JSON.stringify(ty).replace(/"/g,'&quot;')+')">'+escapeHtml(ty)+'</div>';}).join('');
   var scoped=watchItems.filter(function(w){return watchFilter==='ALL'||w.type===watchFilter;});
   var activeList=scoped.filter(function(w){return w.status!=='dropped';}).sort(function(a,b){return new Date(b.addedDate)-new Date(a.addedDate);});
   var droppedList=scoped.filter(function(w){return w.status==='dropped';}).sort(function(a,b){return new Date(b.addedDate)-new Date(a.addedDate);});
@@ -2627,12 +2754,11 @@ function openWatchEdit(id){
   document.getElementById('wte-sym-label').textContent=w.symbol;
   document.getElementById('wte-note').value=w.note||'';
   document.getElementById('wte-tag').value=w.tag||'';
-  wteType=w.type;
-  updateWatchTagOptions('wte-tag-list',w.type);
-  document.querySelectorAll('#wte-type-row .dtcbtn').forEach(function(b){b.classList.remove('on');});
-  var idx=WATCH_TYPES.indexOf(w.type);
-  var btn=document.querySelectorAll('#wte-type-row .dtcbtn')[idx>=0?idx:0];
-  if(btn)btn.classList.add('on');
+  var wteCustom=document.getElementById('wte-type-custom');if(wteCustom)wteCustom.style.display='none';
+  // An item may carry a custom type that was later removed — keep it selectable rather than losing it.
+  if(allWatchTypes().indexOf(w.type)<0&&w.type){customWatchTypes.push(w.type);saveCustomWatchTypes();}
+  fillWatchTypeSelect('wte-type-sel',w.type);
+  setWteType(w.type);
   openM('m-watch-edit');
 }
 function saveWatchEdit(){
@@ -2845,7 +2971,9 @@ load();
 loadTasks();
 loadCaptures();
 loadEvents();
+loadCustomEventTypes();
 loadWatchItems();
+loadCustomWatchTypes();
 try{const b=JSON.parse(localStorage.getItem('tj_autobackup')||'null');const ls=parseInt(localStorage.getItem('tj_lastsync')||'0');if(b&&b.savedAt&&b.savedAt>ls&&Array.isArray(b.trades)&&b.trades.length>=trades.length){trades=b.trades;principles=b.principles||[];sessions=b.sessions||[];alerts=b.alerts||[];plans=b.plans||[];}}catch(e){}
 seedCurriculum();
 updateAlertBell();
