@@ -259,6 +259,9 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
 .yday-head{padding:10px 13px;background:var(--adim);display:flex;align-items:center;justify-content:space-between}
 .yday-title{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--amber)}
 .yday-grade{font-family:var(--mono);font-size:13px;font-weight:700}
+.yday-sum{display:flex;align-items:center;gap:9px}
+.yday-pnl{font-family:var(--mono);font-size:12px;font-weight:700}
+.yday-caret{font-size:10px;color:var(--muted2)}
 .yday-body{padding:10px 13px 12px}
 .yday-lesson{font-size:12px;color:var(--white);line-height:1.6;margin-bottom:7px;border-left:2px solid var(--amber);padding-left:9px;font-style:italic}
 .yday-row{font-size:11px;color:var(--muted2);margin-bottom:4px;line-height:1.5}
@@ -267,6 +270,9 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
 .pm-head{padding:10px 13px;background:var(--cdim);display:flex;align-items:center;justify-content:space-between}
 .pm-title{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--cyan)}
 .pm-body{padding:10px 13px 12px}
+.pm-plan-prompt{width:100%;background:none;border:1px dashed rgba(6,182,212,0.3);color:var(--cyan);font-size:11px;padding:10px;border-radius:10px;cursor:pointer;font-family:var(--mono);letter-spacing:1px}
+.pm-edit-btn{background:none;border:1px solid var(--border2);color:var(--muted2);font-family:var(--mono);font-size:9px;letter-spacing:.5px;padding:3px 8px;border-radius:6px;cursor:pointer}
+.pm-edit-btn:active{color:var(--cyan);border-color:var(--cyan)}
 .pm-bias{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;margin-bottom:7px}
 .pm-bias.bull{background:var(--gdim);color:var(--green);border:1px solid var(--green)}
 .pm-bias.bear{background:var(--rdim);color:var(--red);border:1px solid var(--red)}
@@ -331,6 +337,7 @@ textarea.ibox{width:100%;background:var(--bg);border:1px solid var(--border2);bo
 .tt-list{padding:0 13px 10px}
 .tt-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border)}
 .tt-row:first-child{border-top:none}
+.tt-more{padding:7px 0 2px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;letter-spacing:.5px;color:var(--cyan);cursor:pointer;text-align:center}
 .tt-check{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .tt-check.done{background:var(--green);border-color:var(--green)}
 .tt-row-title{font-size:12px;color:var(--white);flex:1}
@@ -1109,7 +1116,6 @@ function renderToday(){
   const timeStr=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
   const actTrades=trades.filter(t=>new Date(t.createdAt).toISOString().slice(0,10)===today&&(t.status==='ACTIVE'||t.status==='PLANNING'));
   const todaySess=sessions.filter(s=>s.date===today);
-  const todayPlan=plans.find(p=>p.date===today);
   const visSegs=SEGS.slice(Math.max(0,si-1),si+3);
   const segCards=visSegs.map(function(sg){
     const isCur=sg.id===cs,isDone=SEGS.findIndex(function(s){return s.id===sg.id;})<si;
@@ -1138,7 +1144,6 @@ function renderToday(){
     return html;
   }).join('');
   const epPrompt=cs==='postmarket'?'<div style="margin:0 18px 12px;background:var(--adim);border:1px solid rgba(245,158,11,0.3);border-radius:13px;padding:13px 15px;cursor:pointer" onclick="openER(null)"><div style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--amber);margin-bottom:5px">MARKET CLOSED — TIME TO REVIEW</div><div style="font-size:13px;color:var(--white)">Tap to write your Evening Review</div></div>':'';
-  const planBar=todayPlan?'<div style="margin:0 18px 10px;background:var(--pdim);border:1px solid rgba(139,92,246,0.3);border-radius:12px;padding:11px 13px"><div style="font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--purple);margin-bottom:5px">TODAY S PLAN</div><div style="font-size:12px;color:var(--muted2)">Bias: <span style="color:var(--white)">'+todayPlan.bias.toUpperCase()+'</span>'+(todayPlan.levels?' · Levels: <span style="color:var(--amber)">'+todayPlan.levels+'</span>':'')+' </div>'+(todayPlan.watch?'<div style="font-size:11px;color:var(--muted2);margin-top:4px">'+todayPlan.watch+'</div>':'')+'</div>':'';
   const activeAlertsToday=alerts.filter(a=>a.active!==false&&a.type==='time');
   const alertBar=activeAlertsToday.length?buildAlertBar(activeAlertsToday):buildAlertEmpty();
   const atHTML=actTrades.map(t=>'<div class="atrow" onclick="selTradeGo('+t.id+')"><div><div style="display:flex;align-items:center;gap:6px"><span style="font-family:var(--mono);font-size:14px;color:var(--white)">'+t.symbol+'</span><span class="badge '+(t.direction==='BUY'?'bb':'bs')+'">'+t.direction+'</span><span class="badge '+(t.tradeType==='SWING'?'bsw':'bi')+'">'+(t.tradeType||'INTRADAY')+'</span></div><div style="font-size:10px;color:var(--muted2);margin-top:2px">'+((t.logs||[]).length)+'/8 phases · '+t.status+'</div></div><svg viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2" width="15" height="15"><path d="M9 18l6-6-6-6"/></svg></div>').join('');
@@ -1149,7 +1154,7 @@ function renderToday(){
     '<div class="mbar '+(open?'open':'closed')+'" onclick="renderToday()"><div><div class="mbar-lbl" style="color:'+mColor+'">'+(open?'MARKET OPEN':'MARKET CLOSED')+'</div><div class="mbar-time">'+timeStr+' · '+(SEGS.find(s=>s.id===cs)?.label||'')+'</div></div><svg viewBox="0 0 24 24" fill="none" stroke="'+mColor+'" stroke-width="2" width="17" height="17"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg></div>'+
     '<div class="seg-prog">'+dots+'</div>'+
     wlStrip+
-    epPrompt+planBar+alertBar+
+    epPrompt+alertBar+
     (actTrades.length?'<div style="padding:0 18px 8px"><div style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--green);margin-bottom:7px">ACTIVE TRADES</div></div>'+atHTML:'')+
     '<div style="padding:0 18px 8px"><div style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--muted2);margin-bottom:7px">SESSION TIMELINE</div></div>'+
     segCards+
@@ -1819,41 +1824,65 @@ function getModeToggle(){
     +'<button class="stbtn'+(btMode==='BACKTEST'?' active':'')+'" id="mode-bt" onclick="setBTMode(\'BACKTEST\')">&#9670; Backtest</button></div>';
 }
 
+// Collapsed by default on every load; toggled in place so the rest of Today doesn't re-render.
+var ydayExpanded=false;
+function toggleYdayCard(){
+  ydayExpanded=!ydayExpanded;
+  var b=document.getElementById('yday-body');if(b)b.style.display=ydayExpanded?'block':'none';
+  var c=document.getElementById('yday-caret');if(c)c.innerHTML=ydayExpanded?'&#9662;':'&#9656;';
+}
 function getYesterdayCard(){
   var yd=new Date();yd.setDate(yd.getDate()-1);
   var yds=yd.toISOString().slice(0,10);
   var rev=sessions.find(function(s){return s.date===yds&&(s._reviewType==='evening'||s._type==='evening');});
   if(!rev)return'';
   var gradeCol=rev.grade&&['A','A+'].includes(rev.grade)?'var(--green)':rev.grade&&['D','F'].includes(rev.grade)?'var(--red)':'var(--amber)';
+  var ydTrades=trades.filter(function(t){return new Date(t.createdAt).toISOString().slice(0,10)===yds;});
+  var pnl=ydTrades.reduce(function(a,t){return a+(t.pnl||0);},0);
+  var wins=ydTrades.filter(function(t){return t.winLoss==='WIN';}).length;
+  var losses=ydTrades.filter(function(t){return t.winLoss==='LOSS';}).length;
+  var pnlCol=pnl>0?'var(--green)':pnl<0?'var(--red)':'var(--muted2)';
+  var pnlStr=ydTrades.length?(pnl>=0?'+':'-')+'Rs.'+Math.abs(pnl).toLocaleString('en-IN',{maximumFractionDigits:0}):'';
+  var label=new Date(yds+'T12:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
   return'<div class="yday-card">'
-    +'<div class="yday-head"><span class="yday-title">YESTERDAY &mdash; '+yds+'</span>'
-    +(rev.grade?'<span class="yday-grade" style="color:'+gradeCol+'">'+rev.grade+'</span>':'')+'</div>'
-    +'<div class="yday-body">'
+    +'<div class="yday-head" onclick="toggleYdayCard()" style="cursor:pointer">'
+    +'<span class="yday-title">YESTERDAY &middot; '+label+'</span>'
+    +'<span class="yday-sum">'
+    +(rev.grade?'<span class="yday-grade" style="color:'+gradeCol+'">'+rev.grade+'</span>':'')
+    +(pnlStr?'<span class="yday-pnl" style="color:'+pnlCol+'">'+pnlStr+'</span>':'')
+    +'<span class="yday-caret" id="yday-caret">'+(ydayExpanded?'&#9662;':'&#9656;')+'</span>'
+    +'</span></div>'
+    +'<div class="yday-body" id="yday-body" style="display:'+(ydayExpanded?'block':'none')+'">'
+    +(ydTrades.length?'<div class="yday-row">Trades: <b>'+ydTrades.length+'</b> &middot; W/L: <b>'+wins+'/'+losses+'</b>'+(pnlStr?' &middot; P&L: <b style="color:'+pnlCol+'">'+pnlStr+'</b>':'')+'</div>':'<div class="yday-row">No trades logged.</div>')
     +(rev.lesson?'<div class="yday-lesson">'+rev.lesson+'</div>':'')
     +(rev.missed?'<div class="yday-row">&#9651; Missed: <b>'+rev.missed+'</b></div>':'')
     +(rev.observed?'<div class="yday-row">Observed: <b>'+rev.observed.slice(0,110)+(rev.observed.length>110?'&hellip;':'')+'</b></div>':'')
     +'</div></div>';
 }
 
+// Single slot: renders the "add a plan" prompt when empty, the plan summary once saved.
+// Replaces the old split between this card and the separate planBar.
 function getPreMarketCard(date){
   var plan=plans.find(function(p){return p.date===date;});
   var pmLog=sessions.find(function(s){return s.date===date&&s.segmentId==='premarket'&&s.mode!=='BACKTEST';});
-  if(!plan&&!pmLog){
-    return'<div style="margin:0 18px 10px"><button onclick="openPlan(\''+date+'\')" style="width:100%;background:none;border:1px dashed rgba(6,182,212,0.3);color:var(--cyan);font-size:11px;padding:10px;border-radius:10px;cursor:pointer;font-family:var(--mono);letter-spacing:1px">+ PRE-MARKET PLAN</button></div>';
-  }
   var biasClass=plan?(plan.bias==='bullish'?'bull':plan.bias==='bearish'?'bear':'neut'):'neut';
   var biasLabel=plan?(plan.bias||'neutral').toUpperCase():'—';
   var levels=plan&&plan.levels?plan.levels.split(',').map(function(l){return'<span class="pm-level">'+l.trim()+'</span>';}).join(''):'';
   var regime=pmLog&&pmLog.btData&&pmLog.btData.regime?pmLog.btData.regime:'';
   var events=pmLog&&pmLog.btData&&pmLog.btData.l0events?pmLog.btData.l0events:'';
+  var body=plan
+    ?'<div style="display:flex;align-items:center;gap:7px;margin-bottom:6px">'
+      +'<span class="pm-bias '+biasClass+'">'+biasLabel+'</span>'
+      +'<button class="pm-edit-btn" onclick="openPlan(\''+date+'\')">Edit plan</button></div>'
+      +(levels?'<div style="margin-bottom:6px">'+levels+'</div>':'')
+      +(plan.watch?'<div class="pm-row">Watch: <b>'+plan.watch+'</b></div>':'')
+    :'<button class="pm-plan-prompt" onclick="openPlan(\''+date+'\')">+ PRE-MARKET PLAN</button>';
   return'<div class="pm-card">'
     +'<div class="pm-head"><span class="pm-title">PRE-MARKET</span>'
     +'<button class="pm-log-btn" onclick="openSegLog(\'premarket\',\'Pre-Market\')">+ Log</button></div>'
     +'<div class="pm-body">'
-    +(plan?'<span class="pm-bias '+biasClass+'">'+biasLabel+'</span>':'')
-    +(levels?'<div style="margin-bottom:6px">'+levels+'</div>':'')
+    +body
     +(regime?'<div class="pm-row">Regime: <b>'+regime+'</b></div>':'')
-    +(plan&&plan.watch?'<div class="pm-row">Watch: <b>'+plan.watch+'</b></div>':'')
     +(events?'<div class="pm-row">Events: <b>'+events+'</b></div>':'')
     +(pmLog&&pmLog.observation?'<div class="pm-row" style="margin-top:5px;color:var(--muted2)">'+pmLog.observation.slice(0,120)+'</div>':'')
     +'</div></div>';
@@ -2918,6 +2947,10 @@ function duplicateTaskAcrossStreams(id){
   showToast('Copied to all streams','var(--amber)');
 }
 
+// Collapsed by default on every load; "+N more" expands the strip in place.
+var TT_COLLAPSED_MAX=3;
+var ttExpanded=false;
+function toggleTasksStrip(){ttExpanded=!ttExpanded;renderToday();}
 function getTodayTasksStrip(){
   var today=todayStr();
   var daily=tasks.filter(function(t){return t.tier==='daily'&&t.active!==false;});
@@ -2933,7 +2966,10 @@ function getTodayTasksStrip(){
     return a.time.localeCompare(b.time);
   });
   var done=daily.filter(function(t){return(t.completions||[]).indexOf(today)>=0;}).length;
-  var rows=daily.map(function(t){
+  var total=daily.length;
+  var shown=ttExpanded?daily:daily.slice(0,TT_COLLAPSED_MAX);
+  var hidden=total-shown.length;
+  var rows=shown.map(function(t){
     var doneToday=(t.completions||[]).indexOf(today)>=0;
     var q=getQuadrant(t),info=QUADRANTS[q],showDot=!!(t.urgent||t.important);
     return'<div class="tt-row"><div class="tt-check'+(doneToday?' done':'')+'" onclick="toggleTaskToday('+t.id+')">'+(doneToday?'<svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" width="10" height="10"><polyline points="20,6 9,17 4,12"/></svg>':'')+'</div>'
@@ -2946,7 +2982,10 @@ function getTodayTasksStrip(){
     +'<button class="tt-sort-btn'+(taskSortMode==='time'?' active':'')+'" onclick="setTaskSortMode(\'time\')">By Time</button>'
     +'<button class="tt-sort-btn'+(taskSortMode==='priority'?' active':'')+'" onclick="setTaskSortMode(\'priority\')">By Priority</button>'
     +'</div>';
-  return'<div class="tt-strip"><div class="tt-head"><span class="tt-title">TODAY\'S TASKS</span>'+sortToggle+'<span class="tt-prog">'+done+'/'+daily.length+'</span></div><div class="tt-list">'+rows+'</div></div>';
+  var moreRow=hidden>0
+    ?'<div class="tt-more" onclick="toggleTasksStrip()">+'+hidden+' more</div>'
+    :(ttExpanded&&total>TT_COLLAPSED_MAX?'<div class="tt-more" onclick="toggleTasksStrip()">Show less</div>':'');
+  return'<div class="tt-strip"><div class="tt-head"><span class="tt-title">TODAY\'S TASKS</span>'+sortToggle+'<span class="tt-prog">'+done+'/'+total+'</span></div><div class="tt-list">'+rows+moreRow+'</div></div>';
 }
 
 function getTaskSnapshotForDate(dateStr){
